@@ -82,6 +82,7 @@ class FacultyView(APIView):
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
             faculty_id = int(request.GET.get('facultyId', 0))
+            district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
         except Exception as ex:
@@ -93,7 +94,9 @@ class FacultyView(APIView):
             serializer = FacultySerializer(cur_faculty)
             response_data['data'] = serializer.data
         else:
-            cur_faculty = Faculty.objects.filter(enabled=True)
+            cur_faculty = Faculty.objects.filter(enabled=True).order_by('id')
+            if district_id:
+                cur_faculty = cur_faculty.filter(district_id=district_id).order_by('id')
             paginator = Paginator(cur_faculty, cur_per_page)
             page_count = paginator.num_pages
 

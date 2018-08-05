@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 from rest_framework import serializers
-from app_1.models import Faculty, Road, District, Section, Station
+from app_1.models import Faculty, Road, District, Section, Station, ServiceLine
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -35,6 +35,7 @@ class RoadSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'length',
             'start_place',
             'end_place',
             'start_point',
@@ -149,3 +150,80 @@ class SingleStationSerializer(serializers.ModelSerializer):
             'chief',
             'exec_chief_trans'
         )
+
+
+class SectionExcelSerializer(serializers.ModelSerializer):
+    chief = FacultySerializer(many=True)
+    exec_chief_sub_bureau = FacultySerializer(many=True)
+    exec_chief_trans = FacultySerializer(many=True)
+    exec_chief_armed_poli = FacultySerializer(many=True)
+    Section_Station = SingleStationSerializer(many=True)
+
+    class Meta:
+        model = Section
+        fields = (
+            'id',
+            'name',
+            'chief',
+            'exec_chief_sub_bureau',
+            'exec_chief_trans',
+            'exec_chief_armed_poli',
+            'Section_Station',
+        )
+
+
+class RoadExcelSerializer(serializers.ModelSerializer):
+    chief = FacultySerializer(many=True)
+    exec_chief_sub_bureau = FacultySerializer(many=True)
+    exec_chief_trans = FacultySerializer(many=True)
+    exec_chief_armed_poli = FacultySerializer(many=True)
+    section_station_num = serializers.SerializerMethodField()
+    Road_Section = SectionExcelSerializer(many=True, )
+
+    class Meta:
+        model = Road
+        fields = (
+            'id',
+            'name',
+            'length',
+            'section_station_num',
+            'chief',
+            'exec_chief_sub_bureau',
+            'exec_chief_trans',
+            'exec_chief_armed_poli',
+            'Road_Section',
+        )
+
+    def get_section_station_num(self,obj):
+        cur_section = obj.Road_Section.filter(enabled=True).all()
+        section_count = cur_section.count()
+        station_count = 0
+        for item in cur_section:
+            cur_station = item.Section_Station.filter(enabled=True).all()
+            station_count = station_count + cur_station.count()
+        return str(section_count) + '-' + str(station_count)
+
+
+class ServiceLineSerializer(serializers.ModelSerializer):
+    district = DistrictSerializer(many=True)
+    road = RoadSerializer(many=True)
+    roadCount = serializers.SerializerMethodField()
+    class Meta:
+        model = ServiceLine
+        fields = (
+            'id',
+            'name',
+            'startPlace',
+            'endPlace',
+            'time',
+            'remark1',
+            'remark2',
+            'remark3',
+            'district',
+            'road',
+            'roadCount',
+        )
+
+    def get_roadCount(self, obj):
+        return obj.road.filter(enabled=True).count()
+

@@ -2,6 +2,8 @@
 
 import requests
 import json
+# r = requests.post('http://127.0.0.1:8000/account/create')
+# print(r.text)
 
 # 登陆信息
 url = 'http://127.0.0.1:8000/'
@@ -21,11 +23,18 @@ print(r.text)
 
 data = {
     'userName': user_name,
-    'roadId': 2,
+    # 'districtId': 1,
+    'districtId': 2,
+    'name': '勤务路线1',
+    'startPlace': '正阳门',
+    'endPlace': '中华门',
+    'districtStr': '1-2-3-4-5',
+    'remark1': '威严',
+    'time': '2018-06-07'
 }
 
 headers = {
     'authorization': token
 }
-r = requests.delete('http://127.0.0.1:8000/road/edit', params=data, headers=headers)
+r = requests.get('http://127.0.0.1:8000/server_line/edit', params=data, headers=headers)
 print(r.text)

@@ -58,16 +58,23 @@ class StationView(APIView):
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
             section_id = int(request.GET.get('sectionId', 0))
+            district_id = int(request.GET.get('districtId', 0))
+            station_id = int(request.GET.get('stationId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        if section_id:
-            cur_station = Station.objects.filter(enabled=1, section_id=section_id)
+
+        if station_id:
+            cur_station = Station.objects.filter(enabled=1, id=station_id).order_by('id')
+        elif section_id:
+            cur_station = Station.objects.filter(enabled=1, section_id=section_id).order_by('id')
         else:
-            cur_station = Station.objects.filter(enabled=1)
+            cur_station = Station.objects.filter(enabled=1).order_by('id')
+        if district_id:
+            cur_station = cur_station.filter(district_id=district_id)
         paginator = Paginator(cur_station, cur_per_page)
         page_count = paginator.num_pages
 
@@ -143,7 +150,7 @@ class StationFacultyView(APIView):
             duty = request.POST.get('duty', '')
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
-            # faculty_type 1 岗长；2 执行岗长 交通
+            # faculty_type 1 岗长；3 执行岗长 交通
             faculty_type = int(request.POST.get('facultyType'))
         except Exception as ex:
             print 'function name: ', __name__
@@ -167,7 +174,7 @@ class StationFacultyView(APIView):
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
         if faculty_type == 1:
             cur_station.chief.add(cur_faculty)
-        if faculty_type == 2:
+        if faculty_type == 3:
             cur_station.exec_chief_trans.add(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)
 

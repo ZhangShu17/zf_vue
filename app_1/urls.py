@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import url
-import Faculty_View, LoginView, RoadView, District_View, SectionView, StationView
+import Faculty_View, LoginView, RoadView, District_View, SectionView, StationView, ServiceLine
 
 urlpatterns = [
-
+    #  get请求创建区
+    url(r'^district/create/?$', LoginView.CreateDistrictView.as_view(), name='create_district'),
+    #  get请求创建账号
+    url(r'^account/create/?$', LoginView.CreateAccountView.as_view(), name='create_account'),
     # post 登陆，put修改密码
     url(r'^faculty/login/?$', LoginView.LoginView.as_view(), name='login_and_change_password'),
     # district列表
@@ -38,4 +41,9 @@ urlpatterns = [
     url(r'^station/faculty?$', StationView.StationFacultyView.as_view(), name='station_faculty'),
     # 删除岗位人员
     url(r'^station/faculty/delete?$', StationView.DeleteStationFacultyView.as_view(), name='delete_station_faculty'),
+    # 路线所有信息页面展示
+    url(r'^road/excel/info?$', RoadView.RoadExcelView.as_view(), name='road_excel_info'),
+    # 勤务路线
+    url(r'server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
+
 ]

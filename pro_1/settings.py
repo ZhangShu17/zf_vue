@@ -77,21 +77,20 @@ WSGI_APPLICATION = 'pro_1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+# oracle
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.oracle',
-#         'NAME': 'orcl1',
-#         'USER': 'SYSTEM',
-#         'PASSWORD': 'zs123456',
-#         'HOST':'localhost',
+#         'NAME': 'orcl',
+#         'USER': 'icp_zf',
+#         'PASSWORD': 'icp_zf',
+#         'HOST': '192.168.8.111',
 #         'PORT': '1521',
-#         'AUTOCOMMIT': True,
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-#         }
 #     }
 # }
 
+
+# sqlite3
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

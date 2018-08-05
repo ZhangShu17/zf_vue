@@ -20,3 +20,97 @@ for item in account:
     pass_word = item.get('pass_word')
     password_md5 = hashlib.md5(pass_word).hexdigest()
     print(password_md5)
+# {
+#     'retcode': '',
+#     'retmsg': '',
+#     'data':{
+#         'id':'',
+#         'name':'',
+#         'length': '',
+#         'section_station_num': '',
+#         'chief': [
+#             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#         ],
+#         'exec_chief_sub_bureau': [
+#                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                 ],
+#         'exec_chief_trans': [
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                         ],
+#         'exec_chief_armed_poli': [
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                 ],
+#         'sectionList':[
+#             {
+#                 'id': '',
+#                 'name': '',
+#                 'chief': [
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                         ],
+#                 'exec_chief_sub_bureau': [
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                         ],
+#                 'exec_chief_trans': [
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                 ],
+#                 'exec_chief_armed_poli': [
+#                                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                         ],
+#                 'stationList': [
+#                     {'id': '',
+#                      'name': '',
+#                      'chief': [
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                             {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                      ],
+#                     'exec_chief_trans': [
+#                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                     ],
+#                      }
+#                 ]
+#             },
+#             {
+#                             'id': '',
+#                             'name': '',
+#                             'chief': [
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                     ],
+#                             'exec_chief_sub_bureau': [
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                     ],
+#                             'exec_chief_trans': [
+#                                                 {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                                 {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                             ],
+#                             'exec_chief_armed_poli': [
+#                                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                                     ],
+#                             'stationList': [
+#                                 {'id': '',
+#                                  'name': '',
+#                                  'chief': [
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                         {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                  ],
+#                                 'exec_chief_trans': [
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                     {'id':'', 'name': '', 'mobile': '', 'duty':'', 'channel': '', 'callSign': ''},
+#                                 ],
+#                                  }
+#                             ]
+#                         },
+#         ]
+#     }
+# }

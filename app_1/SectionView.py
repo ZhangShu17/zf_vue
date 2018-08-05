@@ -64,6 +64,7 @@ class SectionView(APIView):
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
             road_id = int(request.GET.get('roadId', 0))
+            district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
         except Exception as ex:
@@ -72,9 +73,11 @@ class SectionView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         print(road_id)
         if road_id:
-            cur_section = Section.objects.filter(enabled=1, road_id=road_id)
+            cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('id')
         else:
-            cur_section = Section.objects.filter(enabled=1)
+            cur_section = Section.objects.filter(enabled=1).order_by('id')
+        if district_id:
+            cur_section = cur_section.filter(district_id=district_id).order_by('id')
         paginator = Paginator(cur_section, cur_per_page)
         page_count = paginator.num_pages
 

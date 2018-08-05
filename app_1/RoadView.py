@@ -4,22 +4,25 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import transaction
-from models import Road, Faculty
+from models import Road, Faculty, ServiceLine
 from constants import error_constants
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Serializers.serializers import RoadSerializer, SingleRoadSerializer
+from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer
 from api_tools.token import SystemAuthentication
 
 
 class RoadView(APIView):
     authentication_classes = (SystemAuthentication,)
+
     def post(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
+            service_line_id = int(request.POST.get('serviceLineId', 0))
             district_id = int(request.POST.get('districtId'))
             name = request.POST.get('name')
+            length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
             start_point = request.POST.get('startPoint')
@@ -31,7 +34,8 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_road = Road.objects.create(name=name, start_place=start_place, end_place=end_place, start_point=start_point,
+        cur_road = Road.objects.create(name=name, length=length, start_place=start_place,
+                                       end_place=end_place, start_point=start_point,
                                        end_point=end_point, remark1=remark_1, remark2=remark_2,
                                        remark3=remark_3, district_id=district_id)
         try:
@@ -42,12 +46,17 @@ class RoadView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print('service_line_id', service_line_id)
+        if service_line_id:
+            cur_service_line = ServiceLine.objects.get(id=service_line_id)
+            cur_service_line.road.add(cur_road)
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
+            service_line_id = int(request.GET.get('serviceLineId', 0))
             district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
@@ -55,10 +64,13 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        if district_id:
-            cur_road = Road.objects.filter(enabled=1, district_id=district_id)
+        if service_line_id:
+            cur_service_line = ServiceLine.objects.get(id=service_line_id)
+            cur_road = cur_service_line.road.filter(enabled=True).order_by('id')
         else:
-            cur_road = Road.objects.filter(enabled=1)
+            cur_road = Road.objects.filter(enabled=True).order_by('id')
+        if district_id:
+            cur_road = cur_road.filter(district_id=district_id)
         paginator = Paginator(cur_road, cur_per_page)
         page_count = paginator.num_pages
 
@@ -84,6 +96,7 @@ class RoadView(APIView):
         try:
             road_id = int(request.POST.get('roadId'))
             name = request.POST.get('name', '')
+            length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace', '')
             end_place = request.POST.get('endPlace', '')
             start_point = request.POST.get('startPoint', '')
@@ -98,6 +111,8 @@ class RoadView(APIView):
         cur_road = Road.objects.filter(id=road_id)
         if name:
             cur_road.update(name=name)
+        if length:
+            cur_road.update(length=length)
         if start_place:
             cur_road.update(start_place=start_place)
         if end_place:
@@ -275,4 +290,22 @@ class DeleteRoadView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         Road.objects.filter(id=road_id).update(enabled=False)
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class RoadExcelView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'data': {}}
+        try:
+            road_id = int(request.GET.get('roadId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_road = Road.objects.get(id=road_id)
+        response_data['data'] = RoadExcelSerializer(cur_road).data
         return Response(response_data, status.HTTP_200_OK)
