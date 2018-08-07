@@ -45,5 +45,6 @@ urlpatterns = [
     url(r'^road/excel/info?$', RoadView.RoadExcelView.as_view(), name='road_excel_info'),
     # 勤务路线
     url(r'server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
-
+    # 删除勤务路线
+    url(r'^server_line/delete?$', ServiceLine.DeleteServiceLineView.as_view(), name='delete_server_line'),
 ]

@@ -64,12 +64,12 @@ class ServiceLineView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         print(service_line_id)
         if service_line_id:
-            cur_service_line = ServiceLine.objects.filter(id=service_line_id)
+            cur_service_line = ServiceLine.objects.filter(id=service_line_id, enabled=True)
         elif district_id:
             cur_district = District.objects.get(id=district_id)
-            cur_service_line = cur_district.District_Service.all().order_by('id')
+            cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('id')
         else:
-            cur_service_line = ServiceLine.objects.all().order_by('id')
+            cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('id')
         response_data['data'] = ServiceLineSerializer(cur_service_line, many=True).data
         return Response(response_data, status.HTTP_200_OK)
 
@@ -115,7 +115,19 @@ class ServiceLineView(APIView):
         return Response(response_data, status.HTTP_200_OK)
 
 
+class DeleteServiceLineView(APIView):
+    authentication_classes = (SystemAuthentication,)
 
-
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.POST.get('serviceLineId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        ServiceLine.objects.filter(id=service_line_id).update(enabled=False)
+        return Response(response_data, status.HTTP_200_OK)
 
 
