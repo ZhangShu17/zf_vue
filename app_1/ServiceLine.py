@@ -62,7 +62,6 @@ class ServiceLineView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        print(service_line_id)
         if service_line_id:
             cur_service_line = ServiceLine.objects.filter(id=service_line_id, enabled=True)
         elif district_id:

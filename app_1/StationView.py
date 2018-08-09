@@ -8,7 +8,7 @@ from models import Road, Faculty, Section, Station
 from constants import error_constants
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Serializers.serializers import StationSerializer, SingleStationSerializer
+from Serializers.serializers import StationSerializer, SingleStationSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
 
 
@@ -286,4 +286,52 @@ class StationNotInToSectionView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         Station.objects.filter(id=station_id).update(section_id=None)
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class FacultyNotInStation(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'data':{
+                             'chiefList': [],
+                             'execChiefTransList': []}
+                         }
+        try:
+            station_id = int(request.GET.get('stationId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_station = Station.objects.get(id=station_id)
+        district_id = cur_station.district_id
+        chief_list = cur_station.chief.all().values_list('id', flat=True)
+        trans_list = cur_station.exec_chief_trans.all().values_list('id', flat=True)
+        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=chief_list).order_by('id')
+        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=trans_list).order_by('id')
+        response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
+        response_data['data']['execChiefTransList'] = FacultySerializer(cur_trans_list, many=True).data
+        return Response(response_data, status.HTTP_200_OK)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            station_id = int(request.POST.get('stationId'))
+            faculty_id = int(request.POST.get('facultyId'))
+            faculty_type = int(request.POST.get('facultyType'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_station = Station.objects.get(id=station_id)
+        cur_faculty = Faculty.objects.get(id=faculty_id)
+        if faculty_type == 1:
+            cur_station.chief.add(cur_faculty)
+        if faculty_type == 3:
+            cur_station.exec_chief_trans.add(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)

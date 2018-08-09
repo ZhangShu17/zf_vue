@@ -140,4 +140,4 @@ class Station(models.Model):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'name', 'location'),)
+        unique_together = (('name', 'location'),)

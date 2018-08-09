@@ -9,7 +9,7 @@ from constants import error_constants
 from django.db.models import Q
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Serializers.serializers import SectionSerializer, SingleSectionSerializer
+from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
 
 
@@ -72,7 +72,6 @@ class SectionView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        print(road_id)
         if road_id:
             cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('id')
         else:
@@ -344,3 +343,66 @@ class SectionNotInToRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         Section.objects.filter(id=section_id).update(road_id=None)
         return Response(response_data, status.HTTP_200_OK)
+
+
+class FacultyNotInSection(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'data':{
+                             'chiefList': [],
+                             'execChiefSubBureauList': [],
+                             'execChiefTransList': [],
+                             'execChiefArmedPoliList': []}
+                         }
+        try:
+            section_id = int(request.GET.get('sectionId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_section = Section.objects.get(id=section_id)
+        district_id = cur_section.district_id
+        chief_list = cur_section.chief.all().values_list('id', flat=True)
+        bureau_list = cur_section.exec_chief_sub_bureau.all().values_list('id', flat=True)
+        trans_list = cur_section.exec_chief_trans.all().values_list('id', flat=True)
+        poli_list = cur_section.exec_chief_armed_poli.all().values_list('id', flat=True)
+        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=chief_list).order_by('id')
+        cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=bureau_list).order_by('id')
+        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=trans_list).order_by('id')
+        cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+            exclude(id__in=poli_list).order_by('id')
+        response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
+        response_data['data']['execChiefSubBureauList'] = FacultySerializer(cur_bureau_list, many=True).data
+        response_data['data']['execChiefTransList'] = FacultySerializer(cur_trans_list, many=True).data
+        response_data['data']['execChiefArmedPoliList'] = FacultySerializer(cur_poli_list, many=True).data
+        return Response(response_data, status.HTTP_200_OK)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            section_id = int(request.POST.get('sectionId'))
+            faculty_id = int(request.POST.get('facultyId'))
+            faculty_type = int(request.POST.get('facultyType'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_section = Section.objects.get(id=section_id)
+        cur_faculty = Faculty.objects.get(id=faculty_id)
+        if faculty_type == 1:
+            cur_section.chief.add(cur_faculty)
+        if faculty_type == 2:
+            cur_section.exec_chief_sub_bureau.add(cur_faculty)
+        if faculty_type == 3:
+            cur_section.exec_chief_trans.add(cur_faculty)
+        if faculty_type == 4:
+            cur_section.exec_chief_armed_poli.add(cur_faculty)
+        return Response(response_data, status.HTTP_200_OK)
+
