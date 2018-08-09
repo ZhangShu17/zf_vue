@@ -67,9 +67,9 @@ class ServiceLineView(APIView):
             cur_service_line = ServiceLine.objects.filter(id=service_line_id, enabled=True)
         elif district_id:
             cur_district = District.objects.get(id=district_id)
-            cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('id')
+            cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('-time')
         else:
-            cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('id')
+            cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('-time')
         response_data['data'] = ServiceLineSerializer(cur_service_line, many=True).data
         return Response(response_data, status.HTTP_200_OK)
 
@@ -122,7 +122,7 @@ class DeleteServiceLineView(APIView):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
-            service_line_id = int(request.POST.get('serviceLineId'))
+            service_line_id = int(request.GET.get('serviceLineId'))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex

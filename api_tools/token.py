@@ -30,7 +30,7 @@ class SystemAuthentication(authentication.BaseAuthentication):
         elif request.method == 'PUT':
             user_name = request.POST.get('userName', '0')
         elif request.method == 'DELETE':
-            user_name = request.GET.get('userName', '0')
+            user_name = request.data.get('userName', '0')
         elif request.method == 'GET':
             user_name = request.GET.get('userName', '0')
         else:

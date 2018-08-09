@@ -44,7 +44,17 @@ urlpatterns = [
     # 路线所有信息页面展示
     url(r'^road/excel/info?$', RoadView.RoadExcelView.as_view(), name='road_excel_info'),
     # 勤务路线
-    url(r'server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
+    url(r'^server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
     # 删除勤务路线
     url(r'^server_line/delete?$', ServiceLine.DeleteServiceLineView.as_view(), name='delete_server_line'),
+
+    # 未添加到勤务路线的道路,
+    url(r'^road/tobe_service_line?$', RoadView.RoadNotInToServiceLineView.as_view(), name='tobe_service_line'),
+
+    # 未添加到给定道路的路段列表
+    url(r'^section/tobe_road?$', SectionView.SectionNotInToRoadView.as_view(), name='tobe_road'),
+
+    # 未添加到给定路段的岗位列表
+    url(r'^station/tobe_section?$', StationView.StationNotInToSectionView.as_view(), name='tobe_section'),
+
 ]

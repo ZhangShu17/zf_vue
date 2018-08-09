@@ -9,6 +9,7 @@ from constants import error_constants
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer
+from django.db.models import Q
 from api_tools.token import SystemAuthentication
 
 
@@ -308,4 +309,80 @@ class RoadExcelView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_road = Road.objects.get(id=road_id)
         response_data['data'] = RoadExcelSerializer(cur_road).data
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class RoadNotInToServiceLineView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'dataList': []}
+        try:
+            service_line_id = int(request.GET.get('serviceLineId'))
+            district_id = int(request.GET.get('districtId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        # 当前勤务路线的地区id
+        service_line_district_list = ServiceLine.objects.get(id=service_line_id).\
+            district.all().values_list('id', flat=True)
+        # 当前勤务路线的路线road
+        service_line_road_list = ServiceLine.objects.get(id=service_line_id).\
+            road.all().values_list('id', flat=True)
+
+        query1 = Q()
+
+        temp1 = Q()
+        temp1.connector = 'AND'
+        temp1.children.append(('enabled', True))
+        if district_id:
+            temp1.children.append(('district_id', district_id))
+        query1.add(temp1, 'AND')
+
+        temp2 = Q()
+        temp2.connector = 'AND'
+        temp2.children.append(('district_id__in', service_line_district_list))
+        query1.add(temp2, 'AND')
+
+        query2 = Q()
+        query2.connector = 'AND'
+        query2.children.append(('id__in', service_line_road_list))
+
+        road_list = Road.objects.filter(query1).exclude(query2).order_by('id')
+        serializer = RoadSerializer(road_list, many=True)
+        response_data['dataList'] = serializer.data
+        return Response(response_data, status.HTTP_200_OK)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.POST.get('serviceLineId'))
+            road_id = int(request.POST.get('roadId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        cur_road = Road.objects.get(id=road_id)
+        cur_service_line.road.add(cur_road)
+        return Response(response_data, status.HTTP_200_OK)
+
+    def delete(self, request):
+        print('here')
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.data.get('serviceLineId'))
+            road_id = int(request.data.get('roadId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        cur_road = Road.objects.get(id=road_id)
+        cur_service_line.road.remove(cur_road)
         return Response(response_data, status.HTTP_200_OK)

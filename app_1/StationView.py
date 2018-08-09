@@ -236,3 +236,54 @@ class DeleteStationFacultyView(APIView):
         if faculty_type == 3:
             cur_station.exec_chief_trans.remove(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)
+
+
+class StationNotInToSectionView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'dataList': []}
+        try:
+            section_id = int(request.GET.get('sectionId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_section = Section.objects.get(id=section_id)
+        # 当前路段district_id
+        cur_section_district_id = cur_section.district_id
+        # 当前路段岗位id
+        cur_section_station_id_lists = cur_section.Section_Station.all().values_list('id', flat=True)
+
+        cur_station_list = Station.objects.filter(enabled=True, district_id=cur_section_district_id,
+                                                  section_id__isnull=True).exclude(id__in=cur_section_station_id_lists)
+        response_data['dataList'] = StationSerializer(cur_station_list, many=True).data
+        return Response(response_data, status.HTTP_200_OK)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            section_id = int(request.POST.get('sectionId'))
+            station_id = int(request.POST.get('stationId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        Station.objects.filter(id=station_id).update(section_id=section_id)
+        return Response(response_data, status.HTTP_200_OK)
+
+    def delete(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            section_id = int(request.POST.get('sectionId'))
+            station_id = int(request.POST.get('stationId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        Station.objects.filter(id=station_id).update(section_id=None)
+        return Response(response_data, status.HTTP_200_OK)

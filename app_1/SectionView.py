@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Road, Faculty, Section
 from constants import error_constants
+from django.db.models import Q
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer
@@ -268,10 +269,10 @@ class SingleSectionView(APIView):
 
 # 删除路段人员
 class DeleteSectionFacultyView(APIView):
+    authentication_classes = (SystemAuthentication,)
     def get(self,request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
-        print(request.GET)
         try:
             section_id = int(request.GET.get('sectionId'))
             faculty_id = int(request.GET.get('facultyId'))
@@ -291,4 +292,55 @@ class DeleteSectionFacultyView(APIView):
             cur_section.exec_chief_trans.remove(cur_faculty)
         if faculty_type == 4:
             cur_section.exec_chief_armed_poli.remove(cur_faculty)
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class SectionNotInToRoadView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'dataList': []}
+        try:
+            road_id = int(request.GET.get('roadId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_road = Road.objects.get(id=road_id)
+        # 当前道路district_id
+        cur_road_district_id = cur_road.district_id
+        # 当前道路路段id
+        cur_road_section_id_lists = cur_road.Road_Section.all().values_list('id', flat=True)
+
+        cur_section_list = Section.objects.filter(enabled=True, district_id=cur_road_district_id,
+                                                  road_id__isnull=True).exclude(id__in=cur_road_section_id_lists)
+        response_data['dataList'] = SectionSerializer(cur_section_list, many=True).data
+        return Response(response_data, status.HTTP_200_OK)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            road_id = int(request.POST.get('roadId'))
+            section_id = int(request.POST.get('sectionId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        Section.objects.filter(id=section_id).update(road_id=road_id)
+        return Response(response_data, status.HTTP_200_OK)
+
+    def delete(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            road_id = int(request.data.get('roadId'))
+            section_id = int(request.data.get('sectionId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        Section.objects.filter(id=section_id).update(road_id=None)
         return Response(response_data, status.HTTP_200_OK)
