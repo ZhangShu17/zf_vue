@@ -87,4 +87,13 @@ urlpatterns = [
     # 未添加到station的人员表
     url(r'^faculty/tobe_station?$', StationView.FacultyNotInStation.as_view(), name='faculty_tobe_station'),
 
+    # 复制station
+    url(r'^copy/station?$', StationView.CopyStationView.as_view(), name='copy_station'),
+
+    # 复制section
+    url(r'^copy/section?$', SectionView.CopySectionView.as_view(), name='copy_section'),
+
+    # 复制road
+    url(r'^copy/road?$', RoadView.CopyRoadView.as_view(), name='copy_road'),
+
 ]

@@ -129,4 +129,3 @@ class DeleteServiceLineView(APIView):
         ServiceLine.objects.filter(id=service_line_id).update(enabled=False)
         return Response(response_data, status.HTTP_200_OK)
 
-

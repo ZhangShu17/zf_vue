@@ -19,7 +19,8 @@ class StationView(APIView):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
-            section_id = int(request.POST.get('sectionId',0))
+            district_id = int(request.POST.get('districtId'))
+            section_id = int(request.POST.get('sectionId', 0))
             name = request.POST.get('name')
             location = request.POST.get('location')
             remark_1 = request.POST.get('remark1', '')
@@ -31,7 +32,8 @@ class StationView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if section_id:
             cur_station = Station.objects.create(name=name, location=location, section_id=section_id,
-                                                 remark1=remark_1, remark2=remark_2, remark3=remark_3)
+                                                 district_id=district_id, remark1=remark_1,
+                                                 remark2=remark_2, remark3=remark_3)
             try:
                 with transaction.atomic():
                     cur_station.save()
@@ -41,7 +43,8 @@ class StationView(APIView):
                 return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            cur_station = Station.objects.create(name=name, location=location, remark1=remark_1,
+            cur_station = Station.objects.create(name=name, location=location,
+                                                 remark1=remark_1, district_id=district_id,
                                                  remark2=remark_2, remark3=remark_3)
             try:
                 with transaction.atomic():
@@ -68,13 +71,13 @@ class StationView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
 
         if station_id:
-            cur_station = Station.objects.filter(enabled=1, id=station_id).order_by('id')
+            cur_station = Station.objects.filter(enabled=1, id=station_id).order_by('-id')
         elif section_id:
-            cur_station = Station.objects.filter(enabled=1, section_id=section_id).order_by('id')
+            cur_station = Station.objects.filter(enabled=1, section_id=section_id).order_by('-id')
         else:
-            cur_station = Station.objects.filter(enabled=1).order_by('id')
+            cur_station = Station.objects.filter(enabled=1).order_by('-id')
         if district_id:
-            cur_station = cur_station.filter(district_id=district_id)
+            cur_station = cur_station.filter(district_id=district_id).order_by('-id')
         paginator = Paginator(cur_station, cur_per_page)
         page_count = paginator.num_pages
 
@@ -334,4 +337,44 @@ class FacultyNotInStation(APIView):
             cur_station.chief.add(cur_faculty)
         if faculty_type == 3:
             cur_station.exec_chief_trans.add(cur_faculty)
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class CopyStationView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            station_id = int(request.POST.get('stationId'))
+            name = request.POST.get('name')
+            location = request.POST.get('location')
+            remark_1 = request.POST.get('remark1', '')
+            remark_2 = request.POST.get('remark2', '')
+            remark_3 = request.POST.get('remark3', '')
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_station = Station.objects.get(id=station_id)
+        district_id = cur_station.district_id
+        section_id = cur_station.section_id
+        new_station = Station.objects.create(name=name, location=location, remark1=remark_1, section_id=section_id,
+                                             remark2=remark_2, remark3=remark_3, district_id=district_id)
+        try:
+            with transaction.atomic():
+                new_station.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print('here2')
+        chief = cur_station.chief.all()
+        trans = cur_station.exec_chief_trans.all()
+        for item in chief:
+            new_station.chief.add(item)
+        for item in trans:
+            new_station.exec_chief_trans.add(item)
         return Response(response_data, status.HTTP_200_OK)

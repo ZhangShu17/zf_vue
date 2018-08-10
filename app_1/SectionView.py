@@ -21,6 +21,7 @@ class SectionView(APIView):
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
             road_id = int(request.POST.get('roadId', 0))
+            district_id = int(request.POST.get('districtId'))
             name = request.POST.get('name')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
@@ -37,7 +38,7 @@ class SectionView(APIView):
         if road_id:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
                                                  start_point=start_point, end_point=end_point, road_id=road_id,
-                                                 remark1=remark_1, remark2=remark_2, remark3=remark_3)
+                                                 remark1=remark_1, remark2=remark_2, remark3=remark_3, district_id=district_id)
             try:
                 with transaction.atomic():
                     cur_section.save()
@@ -49,7 +50,7 @@ class SectionView(APIView):
         else:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
                                                  start_point=start_point, end_point=end_point, remark1=remark_1,
-                                                 remark2=remark_2, remark3=remark_3)
+                                                 remark2=remark_2, remark3=remark_3, district_id=district_id)
             try:
                 with transaction.atomic():
                     cur_section.save()
@@ -73,11 +74,11 @@ class SectionView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if road_id:
-            cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('id')
+            cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('-id')
         else:
-            cur_section = Section.objects.filter(enabled=1).order_by('id')
+            cur_section = Section.objects.filter(enabled=1).order_by('-id')
         if district_id:
-            cur_section = cur_section.filter(district_id=district_id).order_by('id')
+            cur_section = cur_section.filter(district_id=district_id).order_by('-id')
         paginator = Paginator(cur_section, cur_per_page)
         page_count = paginator.num_pages
 
@@ -406,3 +407,52 @@ class FacultyNotInSection(APIView):
             cur_section.exec_chief_armed_poli.add(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)
 
+
+class CopySectionView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            section_id = int(request.POST.get('sectionId'))
+            name = request.POST.get('name')
+            start_place = request.POST.get('startPlace')
+            end_place = request.POST.get('endPlace')
+            start_point = request.POST.get('startPoint')
+            end_point = request.POST.get('endPoint')
+            remark_1 = request.POST.get('remark1', '')
+            remark_2 = request.POST.get('remark2', '')
+            remark_3 = request.POST.get('remark3', '')
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_section = Section.objects.get(id=section_id)
+        district_id = cur_section.district_id
+        road_id = cur_section.road_id
+        new_section = Section.objects.create(name=name, road_id=road_id, start_place=start_place,
+                                             end_place=end_place, start_point=start_point, end_point=end_point,
+                                             remark1=remark_1, remark2=remark_2, remark3=remark_3,
+                                             district_id=district_id)
+        try:
+            with transaction.atomic():
+                new_section.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        chief = cur_section.chief.all()
+        bureau = cur_section.exec_chief_sub_bureau.all()
+        trans = cur_section.exec_chief_trans.all()
+        arm_poli = cur_section.exec_chief_armed_poli.all()
+        for item in chief:
+            new_section.chief.add(item)
+        for item in bureau:
+            new_section.exec_chief_sub_bureau.add(item)
+        for item in trans:
+            new_section.exec_chief_trans.add(item)
+        for item in arm_poli:
+            new_section.exec_chief_armed_poli.add(item)
+        return Response(response_data, status.HTTP_200_OK)
