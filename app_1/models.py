@@ -36,7 +36,7 @@ class Faculty(models.Model):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'mobile'),)
+        unique_together = (('name', 'mobile', 'duty'),)
 
 
 # 勤务路线
@@ -59,10 +59,10 @@ class ServiceLine(models.Model):
 # 路线表
 class Road(models.Model):
     name = models.CharField(max_length=100, verbose_name=unicode('路线名称'), null=True)
-    start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'))
-    end_place =  models.CharField(max_length=50, verbose_name=unicode('终点地名'))
-    start_point = models.CharField(max_length=50, verbose_name=unicode('起点经纬度'))
-    end_point = models.CharField(max_length=50, verbose_name=unicode('终点经纬度'))
+    start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
+    end_place =  models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
+    start_point = models.CharField(max_length=50, verbose_name=unicode('起点经纬度'), null=True)
+    end_point = models.CharField(max_length=50, verbose_name=unicode('终点经纬度'), null=True)
     length = models.CharField(max_length=10, verbose_name=unicode('路线长度'), default='')
     district = models.ForeignKey(to=District, related_name='Districr_Road', null=True, on_delete=models.SET_NULL)
     # 路长
@@ -77,11 +77,11 @@ class Road(models.Model):
     exec_chief_armed_poli = models.ManyToManyField(to=Faculty,
                                               related_name='Faculty_Road_Exec_Chief_Armed_Poli')
     # 备注1
-    remark1 = models.CharField(max_length=100, default='')
+    remark1 = models.CharField(max_length=100, default='', null=True)
     # 备注2
-    remark2 = models.CharField(max_length=100, default='')
+    remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
-    remark3 = models.CharField(max_length=100, default='')
+    remark3 = models.CharField(max_length=100, default='', null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -92,10 +92,10 @@ class Road(models.Model):
 class Section(models.Model):
     district = models.ForeignKey(to=District, related_name='district_section', null=True)
     name = models.CharField(max_length=100, verbose_name=unicode('路段名称'), null=True)
-    start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'))
-    end_place = models.CharField(max_length=50, verbose_name=unicode('终点地名'))
-    start_point = models.CharField(max_length=50, verbose_name=unicode('起点经纬度'))
-    end_point = models.CharField(max_length=50, verbose_name=unicode('终点经纬度'))
+    start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
+    end_place = models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
+    start_point = models.CharField(max_length=50, verbose_name=unicode('起点经纬度'), null=True)
+    end_point = models.CharField(max_length=50, verbose_name=unicode('终点经纬度'), null=True)
     road = models.ForeignKey(to=Road, related_name='Road_Section', null=True, on_delete=models.SET_NULL)
     # 段长
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Section_Chief')
@@ -109,11 +109,11 @@ class Section(models.Model):
     exec_chief_armed_poli = models.ManyToManyField(to=Faculty,
                                               related_name='Faculty_Section_Exec_Chief_Armed_Poli')
     # 备注1
-    remark1 = models.CharField(max_length=100, default='')
+    remark1 = models.CharField(max_length=100, default='', null=True)
     # 备注2
-    remark2 = models.CharField(max_length=100, default='')
+    remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
-    remark3 = models.CharField(max_length=100, default='')
+    remark3 = models.CharField(max_length=100, default='', null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -124,7 +124,7 @@ class Section(models.Model):
 class Station(models.Model):
     district = models.ForeignKey(to=District, related_name='district_station', null=True)
     name = models.CharField(max_length=100, verbose_name=unicode('岗哨名称'))
-    location = models.CharField(max_length=50, verbose_name=unicode('岗哨经纬度'), null=False)
+    location = models.CharField(max_length=50, verbose_name=unicode('岗哨经纬度'), null=True)
     section = models.ForeignKey(to=Section, related_name='Section_Station', null=True, on_delete=models.SET_NULL)
     # 岗长-分局
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Station_Chief')
@@ -132,11 +132,11 @@ class Station(models.Model):
     exec_chief_trans = models.ManyToManyField(to=Faculty,
                                          related_name='Faculty_Station_Exec_Chief_Trans')
     # 备注1
-    remark1 = models.CharField(max_length=100, default='')
+    remark1 = models.CharField(max_length=100, default='', null=True)
     # 备注2
-    remark2 = models.CharField(max_length=100, default='')
+    remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
-    remark3 = models.CharField(max_length=100, default='')
+    remark3 = models.CharField(max_length=100, default='', null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
