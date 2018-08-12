@@ -67,11 +67,11 @@ class RoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if service_line_id:
             cur_service_line = ServiceLine.objects.get(id=service_line_id)
-            cur_road = cur_service_line.road.filter(enabled=True).order_by('id')
+            cur_road = cur_service_line.road.filter(enabled=True).order_by('-id')
         else:
-            cur_road = Road.objects.filter(enabled=True).order_by('id')
+            cur_road = Road.objects.filter(enabled=True).order_by('-id')
         if district_id:
-            cur_road = cur_road.filter(district_id=district_id)
+            cur_road = cur_road.filter(district_id=district_id).order_by('-id')
         paginator = Paginator(cur_road, cur_per_page)
         page_count = paginator.num_pages
 

@@ -62,19 +62,27 @@ class FacultyView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
 
-        cur_faculty = Faculty.objects.filter(id=faculty_id)
-        if not cur_faculty.exists():
-            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_faculty = Faculty.objects.get(id=faculty_id)
+        # if not cur_faculty.exists():
+        #     return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if mobile:
-            cur_faculty.update(mobile=mobile)
+            cur_faculty.mobile = mobile
         if name:
-            cur_faculty.update(name=name)
+            cur_faculty.name = name
         if duty:
-            cur_faculty.update(duty=duty)
+            cur_faculty.duty = duty
         if channel:
-            cur_faculty.update(channel=channel)
+            cur_faculty.channel = channel
         if call_sign:
-            cur_faculty.update(call_sign=call_sign)
+            cur_faculty.call_sign = call_sign
+        try:
+            with transaction.atomic():
+                cur_faculty.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):
@@ -147,9 +155,11 @@ class DeleteFacultyView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-
+        cur_faculty = Faculty.objects.get(id=faculty_id)
+        cur_faculty.enabled = False
         try:
-            Faculty.objects.filter(id=faculty_id).update(enabled=False)
+            with transaction.atomic():
+                cur_faculty.save()
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
