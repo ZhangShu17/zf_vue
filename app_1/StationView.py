@@ -111,29 +111,31 @@ class StationView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_station = Station.objects.filter(id=station_id)
+        cur_station = Station.objects.get(id=station_id)
         if name:
-            cur_station.update(name=name)
+            cur_station.name = name
         if location:
-            cur_station.update(location=location)
+            cur_station.location=location
         if remark_1:
-            cur_station.update(remark1=remark_1)
+            cur_station.remark1=remark_1
         if remark_2:
-            cur_station.update(remark1=remark_2)
+            cur_station.remark2 = remark_2
         if remark_3:
-            cur_station.update(remark1=remark_3)
+            cur_station.remark3 = remark_3
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
-            station_id = int(request.GET.get('stationId'))
+            station_id = int(request.data.get('stationId'))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Station.objects.filter(id=station_id).update(enabled=False)
+        cur_station = Station.objects.get(id=station_id)
+        cur_station.enabled = False
+        cur_station.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -275,7 +277,19 @@ class StationNotInToSectionView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Station.objects.filter(id=station_id).update(section_id=section_id)
+        print(section_id)
+        print(station_id)
+        cur_station = Station.objects.get(id=station_id)
+        cur_station.section_id = section_id
+        cur_station.save()
+        # try:
+        #     with transaction.atomic():
+        #         cur_station.save()
+        # except Exception as ex:
+        #     print 'function name: ', __name__
+        #     print Exception, ":", ex
+        #     return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+        #                                    status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -288,7 +302,16 @@ class StationNotInToSectionView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Station.objects.filter(id=station_id).update(section_id=None)
+        cur_station = Station.objects.get(id=station_id)
+        cur_station.section_id = None
+        try:
+            with transaction.atomic():
+                cur_station.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(response_data, status.HTTP_200_OK)
 
 

@@ -25,8 +25,7 @@ class SectionView(APIView):
             name = request.POST.get('name')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
-            start_point = request.POST.get('startPoint')
-            end_point = request.POST.get('endPoint')
+            xy_coordinate = request.POST.get('XYCOORDINATE', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -37,7 +36,7 @@ class SectionView(APIView):
 
         if road_id:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
-                                                 start_point=start_point, end_point=end_point, road_id=road_id,
+                                                 xy_coordinate=xy_coordinate, road_id=road_id,
                                                  remark1=remark_1, remark2=remark_2, remark3=remark_3, district_id=district_id)
             try:
                 with transaction.atomic():
@@ -49,7 +48,7 @@ class SectionView(APIView):
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
-                                                 start_point=start_point, end_point=end_point, remark1=remark_1,
+                                                 xy_coordinate=xy_coordinate, remark1=remark_1,
                                                  remark2=remark_2, remark3=remark_3, district_id=district_id)
             try:
                 with transaction.atomic():
@@ -106,8 +105,7 @@ class SectionView(APIView):
             name = request.POST.get('name', '')
             start_place = request.POST.get('startPlace', '')
             end_place = request.POST.get('endPlace', '')
-            start_point = request.POST.get('startPoint', '')
-            end_point = request.POST.get('endPoint', '')
+            xy_coordinate = request.POST.get('XYCOORDINATE', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -115,22 +113,22 @@ class SectionView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_section = Section.objects.filter(id=section_id)
+        cur_section = Section.objects.get(id=section_id)
         if name:
-            cur_section.update(name=name)
+            cur_section.name = name
         if start_place:
-            cur_section.update(start_place=start_place)
+            cur_section.start_place = start_place
         if end_place:
-            cur_section.update(end_place=end_place)
-        if start_point and end_point:
-            if cur_section.first().start_point != start_point or cur_section.first().end_point != end_point:
-                cur_section.update(start_point=start_point, end_point=end_point)
+            cur_section.end_place = end_place
+        if xy_coordinate:
+            cur_section.xy_coordinate = xy_coordinate
         if remark_1:
-            cur_section.update(remark1=remark_1)
+            cur_section.remark1 = remark_1
         if remark_2:
-            cur_section.update(remark1=remark_2)
+            cur_section.remark2 = remark_2
         if remark_3:
-            cur_section.update(remark1=remark_3)
+            cur_section.remark3 = remark_3
+        cur_section.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -158,7 +156,9 @@ class DeleteSectionView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Section.objects.filter(id=section_id).update(enabled=False)
+        cur_section = Section.objects.get(id=section_id)
+        cur_section.enabled = False
+        cur_section.save()
         return Response(response_data, status.HTTP_200_OK)
 
 

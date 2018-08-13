@@ -4,6 +4,8 @@
 expire_time = 12*60*60
 SECRET_KEY = 'hqvsokks@#1)JJs'
 
+increment = 10000
+
 
 account = [
     {'user_name': 'user0001', 'pass_word': 'zf_7905'},

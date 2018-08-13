@@ -15,8 +15,8 @@ account = [
     {'user_name': 'user0010', 'pass_word': 'zf_9649'},
 ]
 
-for item in account:
-    user_name = item.get('user_name')
-    pass_word = item.get('pass_word')
-    password_md5 = hashlib.md5(pass_word).hexdigest()
-    print(password_md5)
+a = None
+if a:
+    print'yes'
+if not a:
+    print 'no'

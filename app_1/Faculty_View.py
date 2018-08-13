@@ -75,14 +75,7 @@ class FacultyView(APIView):
             cur_faculty.channel = channel
         if call_sign:
             cur_faculty.call_sign = call_sign
-        try:
-            with transaction.atomic():
-                cur_faculty.save()
-        except Exception as ex:
-            print 'function name: ', __name__
-            print Exception, ":", ex
-            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
-                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        cur_faculty.save()
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):
@@ -102,9 +95,9 @@ class FacultyView(APIView):
             serializer = FacultySerializer(cur_faculty)
             response_data['data'] = serializer.data
         else:
-            cur_faculty = Faculty.objects.filter(enabled=True).order_by('id')
+            cur_faculty = Faculty.objects.filter(enabled=True).order_by('-id')
             if district_id:
-                cur_faculty = cur_faculty.filter(district_id=district_id).order_by('id')
+                cur_faculty = cur_faculty.filter(district_id=district_id).order_by('-id')
             paginator = Paginator(cur_faculty, cur_per_page)
             page_count = paginator.num_pages
 
