@@ -2,37 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="133deb6d-226a-4bcb-8f9a-5ca490442bfc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Serializers/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Serializers/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_tools/api_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_tools/api_tools.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/Faculty_View.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/Faculty_View.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/SectionView.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/SectionView.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/StationView.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/StationView.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0002_auto_20180729_1432.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0003_auto_20180730_1044.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0004_auto_20180730_1154.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0005_auto_20180730_1159.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0006_auto_20180730_1200.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0007_auto_20180730_1208.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0008_auto_20180730_1344.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0009_section_enabled.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0010_station_enabled.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0011_auto_20180730_1645.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0012_auto_20180801_0132.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0013_road_length.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0014_auto_20180802_1552.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0015_auto_20180802_1625.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0016_account_district_id.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0017_auto_20180805_1529.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0018_auto_20180807_1534.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0019_auto_20180807_1650.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants/constants.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/signals/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/signals/handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pro_1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pro_1/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +59,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="html" value="1" />
-          <entry key="py" value="188" />
+          <entry key="py" value="190" />
           <entry key="requirements" value="1" />
           <entry key="txt" value="7" />
         </counts>
@@ -97,19 +68,19 @@
         <counts>
           <entry key="HTML" value="1" />
           <entry key="PLAIN_TEXT" value="8" />
-          <entry key="Python" value="188" />
+          <entry key="Python" value="190" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="25326" />
+          <entry key="py" value="25746" />
           <entry key="txt" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="5" />
-          <entry key="Python" value="25318" />
+          <entry key="Python" value="25738" />
           <entry key="SQL" value="8" />
         </counts>
       </usages-collector>
@@ -120,7 +91,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app_1/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
+            <state relative-caret-position="675">
               <caret line="84" column="47" selection-start-line="84" selection-start-column="46" selection-end-line="84" selection-end-column="47" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
@@ -152,16 +123,29 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/signals/handlers.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="132">
-              <caret line="202" column="9" lean-forward="true" selection-start-line="202" selection-start-column="9" selection-end-line="202" selection-end-column="9" />
+              <caret line="202" column="9" selection-start-line="202" selection-start-column="9" selection-end-line="202" selection-end-column="9" />
               <folding>
                 <element signature="e#25#88#0" expanded="true" />
                 <marker date="1534138313640" expanded="true" signature="484:491" ph="..." />
                 <marker date="1534138313640" expanded="true" signature="2148:4829" ph="..." />
                 <marker date="1534138313640" expanded="true" signature="9124:9409" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/t/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+              <folding>
+                <element signature="e#24#63#0" expanded="true" />
+                <marker date="1534141894610" expanded="true" signature="884:885" ph="..." />
               </folding>
             </state>
           </provider>
@@ -199,7 +183,7 @@
         <entry file="file://$PROJECT_DIR$/test/account.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="190">
-              <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+              <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -245,7 +229,6 @@
         <option value="$PROJECT_DIR$/test/excel.html" />
         <option value="$PROJECT_DIR$/test/api_script.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/pro_1/settings.py" />
         <option value="$PROJECT_DIR$/app_1/LoginView.py" />
         <option value="$PROJECT_DIR$/api_tools/token.py" />
         <option value="$PROJECT_DIR$/app_1/urls.py" />
@@ -264,6 +247,8 @@
         <option value="$PROJECT_DIR$/app_1/migrations/0020_auto_20180811_2137.py" />
         <option value="$PROJECT_DIR$/signals/handlers.py" />
         <option value="$PROJECT_DIR$/app_1/models.py" />
+        <option value="$PROJECT_DIR$/pro_1/settings.py" />
+        <option value="$PROJECT_DIR$/t/models.py" />
       </list>
     </option>
   </component>
@@ -274,10 +259,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="302" />
-    <option name="y" value="-16" />
+    <option name="x" value="139" />
+    <option name="y" value="41" />
     <option name="width" value="1128" />
-    <option name="height" value="780" />
+    <option name="height" value="715" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -296,7 +281,12 @@
             <path>
               <item name="pro_1" type="b2602c69:ProjectViewProjectNode" />
               <item name="pro_1" type="462c0819:PsiDirectoryNode" />
-              <item name="Serializers" type="462c0819:PsiDirectoryNode" />
+              <item name="app_1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pro_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pro_1" type="462c0819:PsiDirectoryNode" />
+              <item name="t" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -466,7 +456,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22541603" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -482,7 +473,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" weight="0.32879046" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50075644" side_tool="true" weight="0.28498295" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.49924356" visible="true" weight="0.2764505" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.49924356" visible="true" weight="0.28498295" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.26279864" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -616,13 +607,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pro_1/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/api_script.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="73">
@@ -681,7 +665,7 @@
     <entry file="file://$PROJECT_DIR$/test/account.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
-          <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -748,7 +732,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app_1/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
+        <state relative-caret-position="675">
           <caret line="84" column="47" selection-start-line="84" selection-start-column="46" selection-end-line="84" selection-end-column="47" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
@@ -758,15 +742,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pro_1/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/signals/handlers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
-          <caret line="202" column="9" lean-forward="true" selection-start-line="202" selection-start-column="9" selection-end-line="202" selection-end-column="9" />
+          <caret line="202" column="9" selection-start-line="202" selection-start-column="9" selection-end-line="202" selection-end-column="9" />
           <folding>
             <element signature="e#25#88#0" expanded="true" />
             <marker date="1534138313640" expanded="true" signature="484:491" ph="..." />
             <marker date="1534138313640" expanded="true" signature="2148:4829" ph="..." />
             <marker date="1534138313640" expanded="true" signature="9124:9409" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/t/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+            <marker date="1534141894610" expanded="true" signature="884:885" ph="..." />
           </folding>
         </state>
       </provider>
