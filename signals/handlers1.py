@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from app_1.models import Faculty, ServiceLine, Station, Section
+from app_1.models import Faculty, ServiceLine, Station, Section, Road
 from t.models import guard_admin, guard_line,guard_road, guard_section,guard_station
 from django.db.models import signals
 from django.dispatch import receiver
@@ -144,6 +144,7 @@ def create_update_section(sender, instance, created, **kwargs):
         remark2 = instance.remark2
         remark3 = instance.remark3
         if road_id:
+            print('road_id exist')
             road_id = road_id + increment
         cur_guard_section = guard_section.objects.create(uid=id+increment, section_name=name,
                                                          section_begin=start_place, section_end=end_place,
@@ -163,8 +164,115 @@ def create_update_section(sender, instance, created, **kwargs):
         remark3 = instance.remark3
         enabled = str(int(instance.enabled))
         if road_id:
+            print('road_id exist')
             road_id = road_id + increment
         guard_section.objects.filter(uid=id + increment).update(section_name=name, section_begin=start_place,
                                                                 section_end=end_place, xycoordinate=xy_coordinate,
                                                                 roadid=road_id, remark1=remark1, remark2=remark2,
                                                                 remark3=remark3, enabled=enabled)
+
+
+def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
+    faculty_type = str(sender).split('\'')[1].split('.')[-1].split('_')[-1]
+    if action == 'post_add':
+        print('post_add')
+        for item in pk_set:
+            if faculty_type == 'chief':
+                print('chief')
+                duty_name = u'段长'
+                order_list = 1
+            if faculty_type == 'bureau':
+                print('bureau')
+                duty_name = u'执行段长(分局)'
+                order_list = 2
+            if faculty_type == 'trans':
+                print('trans')
+                duty_name = u'执行段长(交通)'
+                order_list = 3
+            if faculty_type == 'poli':
+                print('trans')
+                duty_name = u'执行段长(武警)'
+                order_list = 3
+            print('打印dutyname orderlist')
+            print(duty_name, order_list)
+            count = is_already_in_use(item)
+            # 无其他职位
+            if count < 2:
+                print('no other')
+                guard_admin.objects.filter(uid=item+increment).update(dutyname=duty_name, orderlist=order_list,
+                                                                     category='2', mainid=instance.id+increment)
+            # 有其他职位
+            else:
+                print('exists')
+                cur_faculty = Faculty.objects.filter(id=item).first()
+                username = cur_faculty.name
+                duties = cur_faculty.duty
+                phone = cur_faculty.mobile
+                radio_station = cur_faculty.channel
+                call = cur_faculty.call_sign
+                cur_guard_admin = guard_admin.objects.create(uid=item+increment, username=username, duties=duties,
+                                                             phone=phone, radio_station=radio_station, call=call,
+                                                             dutyname=duty_name, orderlist=order_list,
+                                                             category='2', mainid=instance.id + increment)
+                cur_guard_admin.save()
+    if action == 'post_remove':
+        for item in pk_set:
+            if faculty_type == 'chief':
+                order_list = 1
+            if faculty_type == 'bureau':
+                order_list = 2
+            if faculty_type == 'trans':
+                order_list = 3
+            if faculty_type == 'poli':
+                order_list = 4
+            count = is_already_in_use(item)
+            # 还有其他职位
+            if count:
+                print('other duty')
+                guard_admin.objects.filter(uid=item+increment, orderlist=order_list,
+                                           category='2', mainid=instance.id + increment).\
+                    delete()
+            else:
+                print('no other duty')
+                guard_admin.objects.filter(uid=item+increment).\
+                    update(dutyname=None, orderlist=None, category=None, mainid=None)
+
+
+signals.m2m_changed.connect(section_faculty_change, sender=Section.chief.through)
+signals.m2m_changed.connect(section_faculty_change, sender=Section.exec_chief_sub_bureau.through)
+signals.m2m_changed.connect(section_faculty_change, sender=Section.exec_chief_trans.through)
+signals.m2m_changed.connect(section_faculty_change, sender=Section.exec_chief_armed_poli.through)
+
+
+@receiver(signals.post_save, sender=Road)
+def create_update_road(sender, instance, created, **kwargs):
+    if created:
+        print('road_created')
+        id = instance.id
+        name = instance.name
+        start_place = instance.start_place
+        end_place = instance.end_place
+        length = instance.length
+        district_id = instance.district_id
+        remark1 = instance.remark1
+        remark2 = instance.remark2
+        remark3 = instance.remark3
+        cur_guard_road = guard_road.objects.create(uid=id+increment, road_name=name,road_begin=start_place,
+                                                   road_end=end_place, areaid=district_id, roadlength=length,
+                                                   remark1=remark1, remark2=remark2, remark3=remark3)
+        cur_guard_road.save()
+    else:
+        print('road_update')
+        id = instance.id
+        name = instance.name
+        start_place = instance.start_place
+        end_place = instance.end_place
+        length = instance.length
+        district_id = instance.district_id
+        remark1 = instance.remark1
+        remark2 = instance.remark2
+        remark3 = instance.remark3
+        enabled = str(int(instance.enabled))
+        guard_road.objects.filter(uid=id+increment).update(uid=id+increment, road_name=name,road_begin=start_place,
+                                                   road_end=end_place, areaid=district_id, roadlength=length,
+                                                   remark1=remark1, remark2=remark2, remark3=remark3, enabled=enabled)

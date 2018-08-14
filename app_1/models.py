@@ -61,8 +61,6 @@ class Road(models.Model):
     name = models.CharField(max_length=100, verbose_name=unicode('路线名称'), null=True)
     start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
     end_place =  models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
-    start_point = models.CharField(max_length=50, verbose_name=unicode('起点经纬度'), null=True)
-    end_point = models.CharField(max_length=50, verbose_name=unicode('终点经纬度'), null=True)
     length = models.CharField(max_length=10, verbose_name=unicode('路线长度'), default='')
     district = models.ForeignKey(to=District, related_name='Districr_Road', null=True, on_delete=models.SET_NULL)
     # 路长
@@ -85,7 +83,7 @@ class Road(models.Model):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'start_point', 'end_point'),)
+        unique_together = (('name', 'start_place', 'end_place'),)
 
 
 # 路段表
@@ -94,7 +92,7 @@ class Section(models.Model):
     name = models.CharField(max_length=100, verbose_name=unicode('路段名称'), null=True)
     start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
     end_place = models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
-    xy_coordinate = models.CharField(max_length=400, default='', null=True)
+    xy_coordinate = models.CharField(max_length=4000, default='', null=True)
     road = models.ForeignKey(to=Road, related_name='Road_Section', null=True, on_delete=models.SET_NULL)
     # 段长
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Section_Chief')
@@ -123,7 +121,7 @@ class Section(models.Model):
 class Station(models.Model):
     district = models.ForeignKey(to=District, related_name='district_station', null=True)
     name = models.CharField(max_length=100, verbose_name=unicode('岗哨名称'))
-    location = models.CharField(max_length=50, verbose_name=unicode('岗哨经纬度'), null=True)
+    location = models.CharField(max_length=100, verbose_name=unicode('岗哨经纬度'), null=True)
     section = models.ForeignKey(to=Section, related_name='Section_Station', null=True, on_delete=models.SET_NULL)
     # 岗长-分局
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Station_Chief')

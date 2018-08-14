@@ -329,7 +329,9 @@ class SectionNotInToRoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Section.objects.filter(id=section_id).update(road_id=road_id)
+        cur_section = Section.objects.get(id=section_id)
+        cur_section.road_id = road_id
+        cur_section.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -342,7 +344,9 @@ class SectionNotInToRoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Section.objects.filter(id=section_id).update(road_id=None)
+        cur_section = Section.objects.get(id=section_id)
+        cur_section.road_id = None
+        cur_section.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -419,8 +423,7 @@ class CopySectionView(APIView):
             name = request.POST.get('name')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
-            start_point = request.POST.get('startPoint')
-            end_point = request.POST.get('endPoint')
+            xy_coordinate = request.POST.get('XYCOORDINATE', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -432,7 +435,7 @@ class CopySectionView(APIView):
         district_id = cur_section.district_id
         road_id = cur_section.road_id
         new_section = Section.objects.create(name=name, road_id=road_id, start_place=start_place,
-                                             end_place=end_place, start_point=start_point, end_point=end_point,
+                                             end_place=end_place, xy_coordinate=xy_coordinate,
                                              remark1=remark_1, remark2=remark_2, remark3=remark_3,
                                              district_id=district_id)
         try:

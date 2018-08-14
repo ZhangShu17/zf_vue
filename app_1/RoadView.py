@@ -26,8 +26,6 @@ class RoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
-            start_point = request.POST.get('startPoint')
-            end_point = request.POST.get('endPoint')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -36,8 +34,7 @@ class RoadView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_road = Road.objects.create(name=name, length=length, start_place=start_place,
-                                       end_place=end_place, start_point=start_point,
-                                       end_point=end_point, remark1=remark_1, remark2=remark_2,
+                                       end_place=end_place, remark1=remark_1, remark2=remark_2,
                                        remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():
@@ -47,7 +44,6 @@ class RoadView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                            status.HTTP_500_INTERNAL_SERVER_ERROR)
-        print('service_line_id', service_line_id)
         if service_line_id:
             cur_service_line = ServiceLine.objects.get(id=service_line_id)
             cur_service_line.road.add(cur_road)
@@ -100,8 +96,6 @@ class RoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace', '')
             end_place = request.POST.get('endPlace', '')
-            start_point = request.POST.get('startPoint', '')
-            end_point = request.POST.get('endPoint', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -109,24 +103,15 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_road = Road.objects.filter(id=road_id)
-        if name:
-            cur_road.update(name=name)
-        if length:
-            cur_road.update(length=length)
-        if start_place:
-            cur_road.update(start_place=start_place)
-        if end_place:
-            cur_road.update(end_place=end_place)
-        if start_point and end_point:
-            if cur_road.first().start_point != start_point or cur_road.first().end_point != end_point:
-                cur_road.update(start_point=start_point, end_point=end_point)
-        if remark_1:
-            cur_road.update(remark1=remark_1)
-        if remark_2:
-            cur_road.update(remark1=remark_2)
-        if remark_3:
-            cur_road.update(remark1=remark_3)
+        cur_road = Road.objects.get(id=road_id)
+        cur_road.name = name
+        cur_road.length = length
+        cur_road.start_place = start_place
+        cur_road.end_place = end_place
+        cur_road.remark1 = remark_1
+        cur_road.remark2 = remark_2
+        cur_road.remark3 = remark_3
+        cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -138,7 +123,9 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Road.objects.filter(id=road_id).update(enabled=False)
+        cur_road = Road.objects.get(id=road_id)
+        cur_road.enabled = False
+        cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -290,7 +277,9 @@ class DeleteRoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Road.objects.filter(id=road_id).update(enabled=False)
+        cur_road = Road.objects.get(id=road_id)
+        cur_road.enabled = False
+        cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -462,8 +451,6 @@ class CopyRoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
-            start_point = request.POST.get('startPoint')
-            end_point = request.POST.get('endPoint')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -473,9 +460,9 @@ class CopyRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_road = Road.objects.get(id=road_id)
         district_id = cur_road.district_id
-        new_road = Road.objects.create(name=name, start_place=start_place, end_place=end_place, length=length,
-                                          start_point=start_point, end_point=end_point, remark1=remark_1,
-                                          remark2=remark_2, remark3=remark_3, district_id=district_id)
+        new_road = Road.objects.create(name=name, start_place=start_place, end_place=end_place,
+                                       length=length, remark1=remark_1, remark2=remark_2,
+                                       remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():
                 new_road.save()

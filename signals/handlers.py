@@ -190,16 +190,16 @@ import cx_Oracle
 # signals.m2m_changed.connect(station_chief_change, sender=Station.exec_chief_trans.through)
 
 
-@receiver(signals.post_save, sender=Section)
-def create_update_section(sender, instance, created, **kwargs):
-    if created:
-        param = {
-            'id': instance.id,
-            'name': instance.name,
-            'start_place': instance.mobile,
-            'end_place': instance.channel,
-            'xy_coordinate': instance.call_sign,
-            'DUTIES': instance.duty
-        }
+# @receiver(signals.post_save, sender=Section)
+# def create_update_section(sender, instance, created, **kwargs):
+#     if created:
+#         param = {
+#             'id': instance.id,
+#             'name': instance.name,
+#             'start_place': instance.mobile,
+#             'end_place': instance.channel,
+#             'xy_coordinate': instance.call_sign,
+#             'DUTIES': instance.duty
+#         }
 
 
