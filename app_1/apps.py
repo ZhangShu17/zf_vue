@@ -9,3 +9,4 @@ class App1Config(AppConfig):
 
     def ready(self):
         import signals.handlers
+        import signals.handlers1

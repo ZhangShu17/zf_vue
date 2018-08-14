@@ -65,16 +65,11 @@ class FacultyView(APIView):
         cur_faculty = Faculty.objects.get(id=faculty_id)
         # if not cur_faculty.exists():
         #     return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        if mobile:
-            cur_faculty.mobile = mobile
-        if name:
-            cur_faculty.name = name
-        if duty:
-            cur_faculty.duty = duty
-        if channel:
-            cur_faculty.channel = channel
-        if call_sign:
-            cur_faculty.call_sign = call_sign
+        cur_faculty.mobile = mobile
+        cur_faculty.name = name
+        cur_faculty.duty = duty
+        cur_faculty.channel = channel
+        cur_faculty.call_sign = call_sign
         cur_faculty.save()
         return Response(response_data, status=status.HTTP_200_OK)
 

@@ -79,25 +79,25 @@ WSGI_APPLICATION = 'pro_1.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 # oracle
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.oracle',
-#         'NAME': 'orcl',
-#         'USER': 'icp_zf',
-#         'PASSWORD': 'icp_zf',
-#         'HOST': '192.168.8.111',
-#         'PORT': '1521',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'orcl',
+        'USER': 'icp_zf',
+        'PASSWORD': 'icp_zf',
+        'HOST': '192.168.8.111',
+        'PORT': '1521',
+    }
+}
 
 
 # sqlite3
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -149,7 +149,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Shanghai'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

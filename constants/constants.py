@@ -4,7 +4,7 @@
 expire_time = 12*60*60
 SECRET_KEY = 'hqvsokks@#1)JJs'
 
-increment = 10000
+increment = 0
 
 
 account = [

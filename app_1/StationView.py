@@ -393,7 +393,6 @@ class CopyStationView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                            status.HTTP_500_INTERNAL_SERVER_ERROR)
-        print('here2')
         chief = cur_station.chief.all()
         trans = cur_station.exec_chief_trans.all()
         for item in chief:
