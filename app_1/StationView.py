@@ -10,6 +10,9 @@ from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import StationSerializer, SingleStationSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
+from t.models import guard_road
+from constants.constants import increment
+from django.db.models import F
 
 
 class StationView(APIView):
@@ -34,6 +37,7 @@ class StationView(APIView):
             cur_station = Station.objects.create(name=name, location=location, section_id=section_id,
                                                  district_id=district_id, remark1=remark_1,
                                                  remark2=remark_2, remark3=remark_3)
+
             try:
                 with transaction.atomic():
                     cur_station.save()
@@ -42,6 +46,11 @@ class StationView(APIView):
                 print Exception, ":", ex
                 return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # 路的段/岗数量更新
+            road_id = Section.objects.get(id=section_id).road_id
+            if road_id:
+                cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
+                cur_guard_road.update(sectionnum=F('stationnum') + 1)
         else:
             cur_station = Station.objects.create(name=name, location=location,
                                                  remark1=remark_1, district_id=district_id,
@@ -136,6 +145,14 @@ class StationView(APIView):
         cur_station = Station.objects.get(id=station_id)
         cur_station.enabled = False
         cur_station.save()
+
+        # 路的段/岗数量更新
+        section_id = cur_station.section_id
+        if section_id:
+            road_id = Section.objects.get(id=section_id).road_id
+            if road_id:
+                guard_road.objects.filter(uid=road_id+increment).update(stationnum=F('stationnum')-1)
+
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -282,14 +299,12 @@ class StationNotInToSectionView(APIView):
         cur_station = Station.objects.get(id=station_id)
         cur_station.section_id = section_id
         cur_station.save()
-        # try:
-        #     with transaction.atomic():
-        #         cur_station.save()
-        # except Exception as ex:
-        #     print 'function name: ', __name__
-        #     print Exception, ":", ex
-        #     return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
-        #                                    status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # 路的段/岗数量更新
+        road_id = Section.objects.get(id=section_id).road_id
+        if road_id:
+            guard_road.objects.filter(uid=road_id + increment).update(stationnum=F('stationnum') + 1)
+
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -312,6 +327,11 @@ class StationNotInToSectionView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # 路的段/岗数量更新
+        road_id = Section.objects.get(id=section_id).road_id
+        if road_id:
+            guard_road.objects.filter(uid=road_id + increment).update(stationnum=F('stationnum') - 1)
+
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -399,4 +419,11 @@ class CopyStationView(APIView):
             new_station.chief.add(item)
         for item in trans:
             new_station.exec_chief_trans.add(item)
+
+        # 路的段/岗数量更新
+        if section_id:
+            road_id = Section.objects.get(id=section_id).road_id
+            if road_id:
+                cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
+                cur_guard_road.update(sectionnum=F('stationnum') + 1)
         return Response(response_data, status.HTTP_200_OK)

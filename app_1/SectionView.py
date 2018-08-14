@@ -5,12 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import transaction
 from models import Road, Faculty, Section
+from t.models import guard_road
 from constants import error_constants
 from django.db.models import Q
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
+from constants.constants import increment
+from django.db.models import F
 
 
 class SectionView(APIView):
@@ -159,6 +162,14 @@ class DeleteSectionView(APIView):
         cur_section = Section.objects.get(id=section_id)
         cur_section.enabled = False
         cur_section.save()
+
+        # 路的段/岗书数量更新
+        road_id = cur_section.road_id
+        if road_id:
+            station_num = cur_section.Section_Station.count()
+            cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
+            cur_guard_road.update(sectionnum=F('sectionnum') - 1)
+            cur_guard_road.update(sectionnum=F('stationnum') - station_num)
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -332,6 +343,12 @@ class SectionNotInToRoadView(APIView):
         cur_section = Section.objects.get(id=section_id)
         cur_section.road_id = road_id
         cur_section.save()
+
+        # 路的段/岗数据更新
+        station_num = cur_section.Section_Station.count()
+        cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
+        cur_guard_road.update(sectionnum=F('sectionnum') + 1)
+        cur_guard_road.update(sectionnum=F('stationnum') + station_num)
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -347,6 +364,11 @@ class SectionNotInToRoadView(APIView):
         cur_section = Section.objects.get(id=section_id)
         cur_section.road_id = None
         cur_section.save()
+        # 路的段/岗数据更新
+        station_num = cur_section.Section_Station.count()
+        cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
+        cur_guard_road.update(sectionnum=F('sectionnum') - 1)
+        cur_guard_road.update(sectionnum=F('stationnum') - station_num)
         return Response(response_data, status.HTTP_200_OK)
 
 

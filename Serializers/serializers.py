@@ -128,6 +128,9 @@ class StationSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'location',
+            'remark1',
+            'remark2',
+            'remark3'
         )
 
 
