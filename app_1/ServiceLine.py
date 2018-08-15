@@ -89,43 +89,35 @@ class ServiceLineView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_service_line = ServiceLine.objects.filter(id=service_line_id)
-        if name:
-            cur_service_line.update(name=name)
-        if start_place:
-            cur_service_line.update(startPlace=start_place)
-        if end_place:
-            cur_service_line.update(endPlace=end_place)
-        if time:
-            cur_service_line.update(time=time)
-        if remark1:
-            cur_service_line.update(remark1=remark1)
-        if remark2:
-            cur_service_line.update(remark2=remark2)
-        if remark3:
-            cur_service_line.update(remark3=remark3)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        cur_service_line.name = name
+        cur_service_line.startPlace = start_place
+        cur_service_line.endPlace = end_place
+        cur_service_line.time = time
+        cur_service_line.remark1 = remark1
+        cur_service_line.remark2 = remark2
+        cur_service_line.remark3 = remark3
+        cur_service_line.save()
         dis_list = []
         if select_districts_str:
             dis_list = select_districts_str.split('-')
-        cur_service_line.first().district.clear()
+        cur_service_line.district.clear()
         for item in dis_list:
             cur_dis = District.objects.get(id=int(item))
-            cur_service_line.first().district.add(cur_dis)
+            cur_service_line.district.add(cur_dis)
         return Response(response_data, status.HTTP_200_OK)
 
-
-class DeleteServiceLineView(APIView):
-    authentication_classes = (SystemAuthentication,)
-
-    def get(self, request):
+    def delete(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
-            service_line_id = int(request.GET.get('serviceLineId'))
+            service_line_id = int(request.data.get('serviceLineId'))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        ServiceLine.objects.filter(id=service_line_id).update(enabled=False)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        cur_service_line.enabled = False
+        cur_service_line.save()
         return Response(response_data, status.HTTP_200_OK)
 

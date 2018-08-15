@@ -11,6 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer, FacultySerializer
 from django.db.models import Q
 from api_tools.token import SystemAuthentication
+from api_tools.api_tools import update_service_line_road_ids
 
 
 class RoadView(APIView):
@@ -47,6 +48,9 @@ class RoadView(APIView):
         if service_line_id:
             cur_service_line = ServiceLine.objects.get(id=service_line_id)
             cur_service_line.road.add(cur_road)
+            # 更新勤务路线的roadids
+            update_service_line_road_ids(service_line_id, cur_road.id, True)
+
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):
@@ -114,19 +118,19 @@ class RoadView(APIView):
         cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
-    def delete(self, request):
-        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
-                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
-        try:
-            road_id = int(request.GET.get('roadId'))
-        except Exception as ex:
-            print 'function name: ', __name__
-            print Exception, ":", ex
-            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_road = Road.objects.get(id=road_id)
-        cur_road.enabled = False
-        cur_road.save()
-        return Response(response_data, status.HTTP_200_OK)
+    # def delete(self, request):
+    #     response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+    #                      'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+    #     try:
+    #         road_id = int(request.GET.get('roadId'))
+    #     except Exception as ex:
+    #         print 'function name: ', __name__
+    #         print Exception, ":", ex
+    #         return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+    #     cur_road = Road.objects.get(id=road_id)
+    #     cur_road.enabled = False
+    #     cur_road.save()
+    #     return Response(response_data, status.HTTP_200_OK)
 
 
 # 获取单条道路信息
@@ -213,30 +217,6 @@ class RoadFacultyView(APIView):
         response_data['data'] = serializer.data
         return Response(response_data, status.HTTP_200_OK)
 
-    # def delete(self, request):
-    #     response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
-    #                      'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
-    #     try:
-    #         road_id = int(request.GET.get('roadId'))
-    #         faculty_id = int(request.GET.get('facultyId'))
-    #         # faculty_type 1 路长；2 执行路长 分局；3： 执行路长 交通；4：执行路长 武警
-    #         faculty_type = int(request.GET.get('facultyType'))
-    #     except Exception as ex:
-    #         print 'function name: ', __name__
-    #         print Exception, ":", ex
-    #         return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-    #     cur_road = Road.objects.get(id=road_id)
-    #     cur_faculty = Faculty.objects.get(id=faculty_id)
-    #     if faculty_type == 1:
-    #         cur_road.chief.remove(cur_faculty)
-    #     if faculty_type == 2:
-    #         cur_road.exec_chief_sub_bureau.remove(cur_faculty)
-    #     if faculty_type == 3:
-    #         cur_road.exec_chief_trans.remove(cur_faculty)
-    #     if faculty_type == 4:
-    #         cur_road.exec_chief_armed_poli.remove(cur_faculty)
-    #     return Response(response_data, status.HTTP_200_OK)
-
 
 class DeleteRoadFaculty(APIView):
     authentication_classes = (SystemAuthentication,)
@@ -281,6 +261,11 @@ class DeleteRoadView(APIView):
         cur_road = Road.objects.get(id=road_id)
         cur_road.enabled = False
         cur_road.save()
+
+        # 更新serviceline的roadids字段
+        related_service_line_list = cur_road.Road_Service.filter(enabled=True).distinct()
+        for item in related_service_line_list:
+            update_service_line_road_ids(item.id, cur_road.id, False)
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -359,6 +344,8 @@ class RoadNotInToServiceLineView(APIView):
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         cur_road = Road.objects.get(id=road_id)
         cur_service_line.road.add(cur_road)
+        # 更新serviceline的roadids
+        update_service_line_road_ids(service_line_id, road_id, True)
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -375,6 +362,8 @@ class RoadNotInToServiceLineView(APIView):
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         cur_road = Road.objects.get(id=road_id)
         cur_service_line.road.remove(cur_road)
+        # 更新serviceline的roadids
+        update_service_line_road_ids(service_line_id, road_id, False)
         return Response(response_data, status.HTTP_200_OK)
 
 

@@ -46,6 +46,7 @@ class ServiceLine(models.Model):
     endPlace = models.CharField(max_length=100)
     time = models.DateField(max_length=100)
     district = models.ManyToManyField(to=District, related_name='District_Service')
+    roadids = models.CharField(max_length=400, default='')
     road = models.ManyToManyField(to='Road', related_name='Road_Service')
     remark1 = models.CharField(max_length=100, default='')
     remark2 = models.CharField(max_length=100, default='')
@@ -53,7 +54,7 @@ class ServiceLine(models.Model):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'startPlace', 'endPlace'),)
+        unique_together = (('name', 'startPlace', 'endPlace', 'time'),)
 
 
 # 路线表
@@ -62,6 +63,7 @@ class Road(models.Model):
     start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
     end_place =  models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
     length = models.CharField(max_length=10, verbose_name=unicode('路线长度'), default='')
+    sectionids = models.CharField(max_length=400, default='')
     district = models.ForeignKey(to=District, related_name='Districr_Road', null=True, on_delete=models.SET_NULL)
     # 路长
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Road_Chief')
@@ -92,7 +94,7 @@ class Section(models.Model):
     name = models.CharField(max_length=100, verbose_name=unicode('路段名称'), null=True)
     start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
     end_place = models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
-    xy_coordinate = models.CharField(max_length=4000, default='', null=True)
+    xy_coordinate = models.CharField(max_length=4000, default='')
     road = models.ForeignKey(to=Road, related_name='Road_Section', null=True, on_delete=models.SET_NULL)
     # 段长
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Section_Chief')

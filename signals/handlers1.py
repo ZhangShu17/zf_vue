@@ -6,6 +6,7 @@ from django.db.models import signals
 from django.dispatch import receiver
 from constants.constants import increment
 from api_tools.api_tools import is_already_in_use
+from api_tools.api_tools import generate_service_line_points
 
 
 @receiver(signals.post_save, sender=Faculty)
@@ -174,6 +175,13 @@ def create_update_section(sender, instance, created, **kwargs):
                                                                 roadid=road_id, remark1=remark1, remark2=remark2,
                                                                 remark3=remark3, enabled=enabled)
 
+    road_id = instance.road_id
+    if road_id:
+        cur_road = Road.objects.get(id=road_id)
+        related_service_line_list = cur_road.Road_Service.filter(enabled=True).distinct()
+        for item in related_service_line_list:
+            generate_service_line_points(item.id)
+
 
 def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
     faculty_type = str(sender).split('\'')[1].split('.')[-1].split('_')[-1]
@@ -249,6 +257,7 @@ signals.m2m_changed.connect(section_faculty_change, sender=Section.exec_chief_ar
 
 @receiver(signals.post_save, sender=Road)
 def create_update_road(sender, instance, created, **kwargs):
+
     if created:
         print('road_created')
         id = instance.id
@@ -279,6 +288,9 @@ def create_update_road(sender, instance, created, **kwargs):
         guard_road.objects.filter(uid=id+increment).update(uid=id+increment, road_name=name,road_begin=start_place,
                                                    road_end=end_place, areaid=district_id, roadlength=length,
                                                    remark1=remark1, remark2=remark2, remark3=remark3, enabled=enabled)
+    related_service_line_list = instance.Road_Service.filter(enabled=True).distinct()
+    for item in related_service_line_list:
+        generate_service_line_points(item.id)
 
 
 def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
@@ -355,18 +367,27 @@ signals.m2m_changed.connect(road_faculty_change, sender=Road.exec_chief_armed_po
 
 @receiver(signals.post_save, sender=ServiceLine)
 def create_update_service_line(sender, instance, created, **kwargs):
+    generate_service_line_points(instance.id)
     if created:
         print('service_line_created')
+        id = instance.id
         name = instance.name
-        startPlace = instance.start_place
-        endPlace = instance.end_place
-        remark1 = instance.remark1
-        remark2 = instance.remark2
-        remark3 = instance.remark3
-
-
-
-
-
-
-
+        startPlace = instance.startPlace
+        endPlace = instance.endPlace
+        count = ServiceLine.objects.filter(name=name, enabled=True).count()
+        if count % 2 == 0:
+            direction = '2'
+        else:
+            direction = '1'
+        cur_guard_line = guard_line.objects.create(uid=id+increment, name=name, begins=startPlace,
+                                                   ends=endPlace, qwid=id+increment, direction=direction)
+        cur_guard_line.save()
+    else:
+        print('service_line_update')
+        id = instance.id
+        name = instance.name
+        startPlace = instance.startPlace
+        endPlace = instance.endPlace
+        enabled = str(int(instance.enabled))
+        guard_line.objects.filter(uid=id+increment).update(name=name, begins=startPlace,
+                                                           ends=endPlace, enabled=enabled)

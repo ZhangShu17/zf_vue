@@ -13,6 +13,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
 from constants.constants import increment
+from api_tools.api_tools import update_road_section_ids
 
 
 class SectionView(APIView):
@@ -40,6 +41,7 @@ class SectionView(APIView):
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
                                                  xy_coordinate=xy_coordinate, road_id=road_id,
                                                  remark1=remark_1, remark2=remark_2, remark3=remark_3, district_id=district_id)
+
             try:
                 with transaction.atomic():
                     cur_section.save()
@@ -48,6 +50,7 @@ class SectionView(APIView):
                 print Exception, ":", ex
                 return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
+            update_road_section_ids(road_id, cur_section.id, True)
         else:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
                                                  xy_coordinate=xy_coordinate, remark1=remark_1,
@@ -133,18 +136,6 @@ class SectionView(APIView):
         cur_section.save()
         return Response(response_data, status.HTTP_200_OK)
 
-    def delete(self, request):
-        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
-                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
-        try:
-            section_id = int(request.GET.get('sectionId'))
-        except Exception as ex:
-            print 'function name: ', __name__
-            print Exception, ":", ex
-            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        Section.objects.filter(id=section_id).update(enabled=False)
-        return Response(response_data, status.HTTP_200_OK)
-
 
 class DeleteSectionView(APIView):
     authentication_classes = (SystemAuthentication,)
@@ -162,10 +153,14 @@ class DeleteSectionView(APIView):
         cur_section.enabled = False
         cur_section.save()
 
+        # 更新road的sectionids字段
+        if cur_section.road_id:
+            update_road_section_ids(cur_section.road_id, section_id, False)
+
         # 路的段/岗书数量更新
         road_id = cur_section.road_id
         if road_id:
-            station_num = cur_section.Section_Station.count()
+            station_num = cur_section.Section_Station.filter(enabled=True).count()
             cur_guard_road = guard_road.objects.get(uid=road_id+increment)
             cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
             cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
@@ -345,10 +340,12 @@ class SectionNotInToRoadView(APIView):
         cur_section.road_id = road_id
         cur_section.save()
 
+        # 修改road的sectionids字段
+        update_road_section_ids(road_id, section_id, True)
         print('road add section')
         print(road_id)
         # 路的段/岗数据更新
-        station_num = cur_section.Section_Station.count()
+        station_num = cur_section.Section_Station.filter(enabled=True).count()
         cur_guard_road = guard_road.objects.get(uid=road_id + increment)
         cur_guard_road.sectionnum = cur_guard_road.sectionnum + 1
         cur_guard_road.stationnum = cur_guard_road.stationnum + station_num
@@ -368,8 +365,12 @@ class SectionNotInToRoadView(APIView):
         cur_section = Section.objects.get(id=section_id)
         cur_section.road_id = None
         cur_section.save()
+
+        # 更新road 的sectionids
+        update_road_section_ids(road_id, section_id, False)
+
         # 路的段/岗数据更新
-        station_num = cur_section.Section_Station.count()
+        station_num = cur_section.Section_Station.filter(enabled=True).count()
         cur_guard_road = guard_road.objects.get(uid=road_id + increment)
         cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
         cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
