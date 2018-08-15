@@ -29,7 +29,7 @@ class Account(models.Model):
 class Faculty(models.Model):
     district = models.ForeignKey(to=District, related_name='district_faculty', null=True)
     name = models.CharField(max_length=255, verbose_name=unicode('姓名'))
-    mobile = models.CharField(max_length=11, verbose_name=unicode('电话'), null=True)
+    mobile = models.CharField(max_length=30, verbose_name=unicode('电话'), null=True)
     duty = models.CharField(max_length=30, verbose_name=unicode('职务'), null=True)
     channel = models.CharField(max_length=10, verbose_name=unicode('电台信道'), null=True)
     call_sign = models.CharField(max_length=10, verbose_name=unicode('电台呼号'), null=True)

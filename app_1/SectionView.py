@@ -13,7 +13,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
 from constants.constants import increment
-from django.db.models import F
 
 
 class SectionView(APIView):
@@ -167,9 +166,10 @@ class DeleteSectionView(APIView):
         road_id = cur_section.road_id
         if road_id:
             station_num = cur_section.Section_Station.count()
-            cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
-            cur_guard_road.update(sectionnum=F('sectionnum') - 1)
-            cur_guard_road.update(sectionnum=F('stationnum') - station_num)
+            cur_guard_road = guard_road.objects.get(uid=road_id+increment)
+            cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
+            cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
+            cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -189,6 +189,7 @@ class SectionFacultyView(APIView):
             duty = request.POST.get('duty', '')
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
+            district_id = int(request.POST.get('districtId', 0))
             # faculty_type 1 段长；2 执行段长 分局；3： 执行段长 交通；4：执行段长 武警
             faculty_type = int(request.POST.get('facultyType'))
         except Exception as ex:
@@ -202,7 +203,7 @@ class SectionFacultyView(APIView):
             cur_faculty = cur_faculty.first()
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
-                                                 channel=channel, call_sign=call_sign)
+                                                 district_id=district_id, channel=channel, call_sign=call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
@@ -344,11 +345,14 @@ class SectionNotInToRoadView(APIView):
         cur_section.road_id = road_id
         cur_section.save()
 
+        print('road add section')
+        print(road_id)
         # 路的段/岗数据更新
         station_num = cur_section.Section_Station.count()
-        cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
-        cur_guard_road.update(sectionnum=F('sectionnum') + 1)
-        cur_guard_road.update(sectionnum=F('stationnum') + station_num)
+        cur_guard_road = guard_road.objects.get(uid=road_id + increment)
+        cur_guard_road.sectionnum = cur_guard_road.sectionnum + 1
+        cur_guard_road.stationnum = cur_guard_road.stationnum + station_num
+        cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -366,9 +370,10 @@ class SectionNotInToRoadView(APIView):
         cur_section.save()
         # 路的段/岗数据更新
         station_num = cur_section.Section_Station.count()
-        cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
-        cur_guard_road.update(sectionnum=F('sectionnum') - 1)
-        cur_guard_road.update(sectionnum=F('stationnum') - station_num)
+        cur_guard_road = guard_road.objects.get(uid=road_id + increment)
+        cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
+        cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
+        cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -456,7 +461,7 @@ class CopySectionView(APIView):
         cur_section = Section.objects.get(id=section_id)
         district_id = cur_section.district_id
         road_id = cur_section.road_id
-        new_section = Section.objects.create(name=name, road_id=road_id, start_place=start_place,
+        new_section = Section.objects.create(name=name, start_place=start_place,
                                              end_place=end_place, xy_coordinate=xy_coordinate,
                                              remark1=remark_1, remark2=remark_2, remark3=remark_3,
                                              district_id=district_id)

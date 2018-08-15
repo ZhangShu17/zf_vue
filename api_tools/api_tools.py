@@ -20,7 +20,7 @@ def is_already_in_use(faculty_id):
    count = count + cur_faculty.Faculty_Road_Exec_Chief_Armed_Poli.distinct().count()
    count = count + cur_faculty.Faculty_Section_Chief.distinct().count()
    count = count + cur_faculty.Faculty_Section_Exec_Chief_Sub_Bureau.distinct().count()
-   count = count + cur_faculty.Faculty_Road_Exec_Chief_Trans.distinct().count()
+   count = count + cur_faculty.Faculty_Section_Exec_Chief_Trans.distinct().count()
    count = count + cur_faculty.Faculty_Section_Exec_Chief_Armed_Poli.distinct().count()
    count = count + cur_faculty.Faculty_Station_Chief.distinct().count()
    count = count + cur_faculty.Faculty_Station_Exec_Chief_Trans.distinct().count()

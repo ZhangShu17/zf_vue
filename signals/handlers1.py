@@ -6,7 +6,6 @@ from django.db.models import signals
 from django.dispatch import receiver
 from constants.constants import increment
 from api_tools.api_tools import is_already_in_use
-from django.db.models import F
 
 
 @receiver(signals.post_save, sender=Faculty)
@@ -147,8 +146,9 @@ def create_update_section(sender, instance, created, **kwargs):
         if road_id:
             print('road_id exist')
             road_id = road_id + increment
-            cur_guard_road = guard_road.objects.filter(uid=road_id)
-            cur_guard_road.update(sectionnum=F('sectionnum')+1)
+            cur_guard_road = guard_road.objects.get(uid=road_id)
+            cur_guard_road.sectionnum = cur_guard_road.sectionnum + 1
+            cur_guard_road.save()
         cur_guard_section = guard_section.objects.create(uid=id+increment, section_name=name,
                                                          section_begin=start_place, section_end=end_place,
                                                          xycoordinate=xy_coordinate,roadid=road_id, remark1=remark1,
@@ -195,7 +195,7 @@ def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
             if faculty_type == 'poli':
                 print('trans')
                 duty_name = u'执行段长(武警)'
-                order_list = 3
+                order_list = 4
             print('打印dutyname orderlist')
             print(duty_name, order_list)
             count = is_already_in_use(item)
@@ -301,7 +301,7 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
             if faculty_type == 'poli':
                 print('trans')
                 duty_name = u'执行路长(武警)'
-                order_list = 3
+                order_list = 4
             print('打印dutyname orderlist')
             print(duty_name, order_list)
             count = is_already_in_use(item)
@@ -347,9 +347,26 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                     update(dutyname=None, orderlist=None, category=None, mainid=None)
 
 
-signals.m2m_changed.connect(section_faculty_change, sender=Road.chief.through)
-signals.m2m_changed.connect(section_faculty_change, sender=Road.exec_chief_sub_bureau.through)
-signals.m2m_changed.connect(section_faculty_change, sender=Road.exec_chief_trans.through)
-signals.m2m_changed.connect(section_faculty_change, sender=Road.exec_chief_armed_poli.through)
+signals.m2m_changed.connect(road_faculty_change, sender=Road.chief.through)
+signals.m2m_changed.connect(road_faculty_change, sender=Road.exec_chief_sub_bureau.through)
+signals.m2m_changed.connect(road_faculty_change, sender=Road.exec_chief_trans.through)
+signals.m2m_changed.connect(road_faculty_change, sender=Road.exec_chief_armed_poli.through)
+
+
+@receiver(signals.post_save, sender=ServiceLine)
+def create_update_service_line(sender, instance, created, **kwargs):
+    if created:
+        print('service_line_created')
+        name = instance.name
+        startPlace = instance.start_place
+        endPlace = instance.end_place
+        remark1 = instance.remark1
+        remark2 = instance.remark2
+        remark3 = instance.remark3
+
+
+
+
+
 
 

@@ -50,7 +50,7 @@ class StationView(APIView):
             road_id = Section.objects.get(id=section_id).road_id
             if road_id:
                 cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
-                cur_guard_road.update(sectionnum=F('stationnum') + 1)
+                cur_guard_road.update(stationnum=F('stationnum')+1)
         else:
             cur_station = Station.objects.create(name=name, location=location,
                                                  remark1=remark_1, district_id=district_id,
@@ -172,6 +172,7 @@ class StationFacultyView(APIView):
             duty = request.POST.get('duty', '')
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
+            district_id = int(request.POST.get('districtId', 0))
             # faculty_type 1 岗长；3 执行岗长 交通
             faculty_type = int(request.POST.get('facultyType'))
         except Exception as ex:
@@ -185,7 +186,7 @@ class StationFacultyView(APIView):
             cur_faculty = cur_faculty.first()
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
-                                                 channel=channel, call_sign=call_sign)
+                                                 district_id=district_id, channel=channel, call_sign=call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
@@ -403,7 +404,7 @@ class CopyStationView(APIView):
         cur_station = Station.objects.get(id=station_id)
         district_id = cur_station.district_id
         section_id = cur_station.section_id
-        new_station = Station.objects.create(name=name, location=location, remark1=remark_1, section_id=section_id,
+        new_station = Station.objects.create(name=name, location=location, remark1=remark_1,
                                              remark2=remark_2, remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():

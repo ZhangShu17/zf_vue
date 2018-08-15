@@ -57,8 +57,8 @@ class guard_road(models.Model):
     remark3 = models.CharField(max_length=100, null=True)
     lineid = models.IntegerField(null=True)
     roadlength = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    sectionnum = models.IntegerField(null=True)
-    stationnum = models.IntegerField(null=True)
+    sectionnum = models.PositiveIntegerField(default=0)
+    stationnum = models.PositiveIntegerField(default=0)
     areaid = models.IntegerField(null=True)
     enabled = models.CharField(max_length=1, default='1')
 
@@ -74,6 +74,7 @@ class guard_line(models.Model):
     qwid = models.CharField(max_length=30, null=True)
     begin_point = models.CharField(max_length=100, null=True)
     end_point = models.CharField(max_length=100, null=True)
+    vedio_id = models.CharField(max_length=100, null=True)
     direction = models.CharField(max_length=10, null=True)
     points = models.FileField(null=True)
     tz = models.CharField(max_length=20, null=True)

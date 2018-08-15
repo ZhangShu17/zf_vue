@@ -165,6 +165,7 @@ class RoadFacultyView(APIView):
             duty = request.POST.get('duty', '')
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
+            district_id = int(request.POST.get('districtId', 0))
             # faculty_type 1 路长；2 执行路长 分局；3： 执行路长 交通；4：执行路长 武警
             faculty_type = int(request.POST.get('facultyType'))
         except Exception as ex:
@@ -178,7 +179,7 @@ class RoadFacultyView(APIView):
             cur_faculty = cur_faculty.first()
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
-                                                 channel=channel, call_sign=call_sign)
+                                                 district_id=district_id,channel=channel, call_sign=call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
