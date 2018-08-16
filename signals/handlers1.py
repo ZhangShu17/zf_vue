@@ -377,9 +377,11 @@ def create_update_service_line(sender, instance, created, **kwargs):
         count = ServiceLine.objects.filter(name=name, enabled=True).count()
         if count % 2 == 0:
             direction = '2'
+            used = '0'
         else:
             direction = '1'
-        cur_guard_line = guard_line.objects.create(uid=id+increment, name=name, begins=startPlace,
+            used = '1'
+        cur_guard_line = guard_line.objects.create(uid=id+increment, name=name, begins=startPlace, used=used,
                                                    ends=endPlace, qwid=id+increment, direction=direction)
         cur_guard_line.save()
     else:

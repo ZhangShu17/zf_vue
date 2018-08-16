@@ -79,5 +79,6 @@ class guard_line(models.Model):
     points = models.FileField(null=True)
     tz = models.CharField(max_length=20, null=True)
     line_id = models.CharField(max_length=10, null=True)
+    used = models.CharField(max_length=1, default='1')
     enabled = models.CharField(max_length=1, default='1')
 
