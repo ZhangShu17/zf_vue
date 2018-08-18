@@ -20,3 +20,7 @@ if a:
     print'yes'
 if not a:
     print 'no'
+
+b = ' '
+if not b:
+    print('space')

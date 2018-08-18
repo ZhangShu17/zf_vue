@@ -74,7 +74,7 @@ class guard_line(models.Model):
     qwid = models.CharField(max_length=30, null=True)
     begin_point = models.CharField(max_length=100, null=True)
     end_point = models.CharField(max_length=100, null=True)
-    vedio_id = models.CharField(max_length=100, null=True)
+    video_id = models.CharField(max_length=100, null=True)
     direction = models.CharField(max_length=10, null=True)
     points = models.FileField(null=True)
     tz = models.CharField(max_length=20, null=True)

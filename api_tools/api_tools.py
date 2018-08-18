@@ -5,6 +5,7 @@ from app_1.models import Road, Section, Station, Faculty, ServiceLine
 from t.models import guard_line
 from constants.constants import increment
 
+
 def generate_error_response(error_message, error_type):
     return Response({'retCode': error_message[0],
                      'retMsg': error_message[1]}, error_type)
@@ -64,6 +65,7 @@ def update_service_line_road_ids(service_line_id, road_id, bollen):
 def generate_service_line_points(service_line_id):
     cur_service_line = ServiceLine.objects.get(id=service_line_id)
     road_ids = cur_service_line.roadids
+    print('road_ids=', road_ids)
     if not road_ids:
         guard_line.objects.filter(uid=service_line_id + increment). \
             update(points='', begin_point='', end_point='')
@@ -79,11 +81,21 @@ def generate_service_line_points(service_line_id):
         for section_id in section_id_list:
             cur_section = Section.objects.get(id=int(section_id))
             point_list.append(cur_section.xy_coordinate)
+    begin_point, end_point, points_str = handle(point_list)
+    guard_line.objects.filter(uid=service_line_id+increment).\
+        update(points=points_str, begin_point=begin_point, end_point=end_point)
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!Done!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+
+
+def handle(point_list):
+    points_str = ','.join(point_list)
+    point_list1 = points_str.split(',')
     begin_point = ''
     end_point = ''
-    if len(point_list):
-        begin_point = point_list[0]
-        end_point = point_list[-1]
-    points = ','.join(point_list)
-    guard_line.objects.filter(uid=service_line_id+increment).\
-        update(points=points, begin_point=begin_point, end_point=end_point)
+    for item in point_list1:
+        if not item:
+            point_list1.remove(item)
+    if len(point_list1):
+        begin_point = point_list1[0] + ',' + point_list1[1]
+        end_point = point_list1[-2] + ',' + point_list1[-1]
+    return begin_point, end_point, points_str

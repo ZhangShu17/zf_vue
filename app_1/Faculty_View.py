@@ -22,8 +22,12 @@ class FacultyView(APIView):
             name = request.POST.get('name', '')
             mobile = request.POST.get('mobile', '')
             duty = request.POST.get('duty', '')
+            district_id = int(request.POST.get('districtId', 0))
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
+            level = int(request.POST.get('level', 0))
+            role = int(request.POST.get('role', 0))
+            road_section_station = int(request.POST.get('road_section_station', 0))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
@@ -35,8 +39,9 @@ class FacultyView(APIView):
         if cur_faculty.exists():
             cur_faculty.update(enabled=True)
         else:
-            cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
-                                                 channel=channel, call_sign=call_sign)
+            cur_faculty = Faculty.objects.create(district_id=district_id, name=name, mobile=mobile, duty=duty,
+                                                 channel=channel, call_sign=call_sign, level=level, role=role,
+                                                 main_id=road_section_station)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
@@ -57,19 +62,23 @@ class FacultyView(APIView):
             duty = request.POST.get('duty', '')
             channel = request.POST.get('channel', '')
             call_sign = request.POST.get('callSign', '')
+            level = int(request.POST.get('level', 0))
+            role = int(request.POST.get('role', 0))
+            road_section_station = int(request.POST.get('road_section_station', 0))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
 
         cur_faculty = Faculty.objects.get(id=faculty_id)
-        # if not cur_faculty.exists():
-        #     return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_faculty.mobile = mobile
         cur_faculty.name = name
         cur_faculty.duty = duty
         cur_faculty.channel = channel
         cur_faculty.call_sign = call_sign
+        cur_faculty.level = level
+        cur_faculty.role = role
+        cur_faculty.main_id = road_section_station
         cur_faculty.save()
         return Response(response_data, status=status.HTTP_200_OK)
 

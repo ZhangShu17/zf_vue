@@ -26,6 +26,8 @@ class StationView(APIView):
             section_id = int(request.POST.get('sectionId', 0))
             name = request.POST.get('name')
             location = request.POST.get('location')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -35,8 +37,8 @@ class StationView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if section_id:
             cur_station = Station.objects.create(name=name, location=location, section_id=section_id,
-                                                 district_id=district_id, remark1=remark_1,
-                                                 remark2=remark_2, remark3=remark_3)
+                                                 district_id=district_id, channel=channel, call_sign=call_sign,
+                                                 remark1=remark_1,remark2=remark_2, remark3=remark_3)
 
             try:
                 with transaction.atomic():
@@ -52,8 +54,8 @@ class StationView(APIView):
                 cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
                 cur_guard_road.update(stationnum=F('stationnum')+1)
         else:
-            cur_station = Station.objects.create(name=name, location=location,
-                                                 remark1=remark_1, district_id=district_id,
+            cur_station = Station.objects.create(name=name, location=location, channel=channel,
+                                                 remark1=remark_1, district_id=district_id, call_sign=call_sign,
                                                  remark2=remark_2, remark3=remark_3)
             try:
                 with transaction.atomic():
@@ -74,6 +76,7 @@ class StationView(APIView):
             station_id = int(request.GET.get('stationId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
+            section_name = ''
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
@@ -82,6 +85,7 @@ class StationView(APIView):
         if station_id:
             cur_station = Station.objects.filter(enabled=1, id=station_id).order_by('-id')
         elif section_id:
+            section_name = Section.objects.get(id=section_id).name
             cur_station = Station.objects.filter(enabled=1, section_id=section_id).order_by('-id')
         else:
             cur_station = Station.objects.filter(enabled=1).order_by('-id')
@@ -100,6 +104,7 @@ class StationView(APIView):
             station_lists = paginator.page(page)
         serializer = StationSerializer(station_lists, many=True)
         response_data['data'] = {}
+        response_data['data']['sectionName'] = section_name
         response_data['data']['curPage'] = page
         response_data['data']['listCount'] = paginator.count
         response_data['data']['list'] = serializer.data
@@ -113,6 +118,8 @@ class StationView(APIView):
             station_id = int(request.POST.get('stationId'))
             name = request.POST.get('name', '')
             location = request.POST.get('location', '')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -125,6 +132,10 @@ class StationView(APIView):
             cur_station.name = name
         if location:
             cur_station.location=location
+        if channel:
+            cur_station.channel = channel
+        if call_sign:
+            cur_station.call_sign = call_sign
         if remark_1:
             cur_station.remark1=remark_1
         if remark_2:

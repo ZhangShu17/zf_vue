@@ -20,9 +20,10 @@ class CreateAccountView(APIView):
         for item in account:
             user_name = item.get('user_name')
             pass_word = item.get('pass_word')
+            district_id = item.get('district_id')
             password_md5 = hashlib.md5(pass_word).hexdigest()
             if not Account.objects.filter(name=user_name).exists():
-                cur_account = Account.objects.create(name=user_name, password=password_md5)
+                cur_account = Account.objects.create(name=user_name, password=password_md5, district_id=district_id)
                 try:
                     with transaction.atomic():
                         cur_account.save()

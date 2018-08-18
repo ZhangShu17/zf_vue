@@ -15,6 +15,10 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 
 class FacultySerializer(serializers.ModelSerializer):
+    level_name = serializers.SerializerMethodField()
+    role_name = serializers.SerializerMethodField()
+    main_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Faculty
         fields = (
@@ -23,8 +27,78 @@ class FacultySerializer(serializers.ModelSerializer):
             'mobile',
             'duty',
             'channel',
-            'call_sign'
+            'call_sign',
+            'level',
+            'level_name',
+            'role',
+            'role_name',
+            'main_id',
+            'main_name',
+            'district_id'
         )
+
+    def get_level_name(self, obj):
+        if obj.level == 1:
+            return u'路'
+        elif obj.level == 2:
+            return u'段'
+        elif obj.level == 3:
+            return u'岗'
+        else:
+            return ''
+
+    def get_role_name(self, obj):
+        if obj.level == 1:
+            if obj.role == 1:
+                return u'路长'
+            elif obj.role == 2:
+                return u'执行路长(分局)'
+            elif obj.role == 3:
+                return u'执行路长(交管)'
+            elif obj.role == 4:
+                return u'执行路长(武警)'
+            else:
+                return ''
+        elif obj.level == 2:
+            if obj.role == 1:
+                return u'段长'
+            elif obj.role == 2:
+                return u'执行段长(分局)'
+            elif obj.role == 3:
+                return u'执行段长(交通)'
+            elif obj.role == 4:
+                return u'执行段长(武警)'
+            else:
+                return ''
+        elif obj.level == 3:
+            if obj.role == 1:
+                return u'岗长(分局)'
+            elif obj.role == 2:
+                return u'执行岗长(交通)'
+            else:
+                return ''
+        else:
+            return ''
+
+    def get_main_name(self, obj):
+        if obj.level == 1:
+            if obj.main_id:
+                return Road.objects.get(id=obj.main_id).name
+            else:
+                return ''
+        elif obj.level == 2:
+            if obj.main_id:
+                return Section.objects.get(id=obj.main_id).name
+            else:
+                return ''
+        elif obj.level == 3:
+            if obj.main_id:
+                return Station.objects.get(id=obj.main_id).name
+            else:
+                return ''
+        else:
+            return ''
+
 
 
 class RoadSerializer(serializers.ModelSerializer):
@@ -128,6 +202,8 @@ class StationSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'location',
+            'channel',
+            'call_sign',
             'remark1',
             'remark2',
             'remark3'

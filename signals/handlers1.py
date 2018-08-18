@@ -19,7 +19,7 @@ def create_update_faculty(sender, instance, created, **kwargs):
         duty = instance.duty
         channel = instance.channel
         call_sign = instance.call_sign
-        cur_guard_admin = guard_admin.objects.create(uid=id+increment, duties=duty,
+        cur_guard_admin = guard_admin.objects.create(id=id+increment, uid=id+increment, duties=duty,
                                                      phone=mobile, radio_station=channel,
                                                      call=call_sign, username=name)
         cur_guard_admin.save()
@@ -50,7 +50,7 @@ def create_update_station(sender, instance, created, **kwargs):
         section_id = instance.section_id
         if section_id:
             section_id = section_id + increment
-        cur_guard_station = guard_station.objects.create(uid=id+increment, station_name=name,
+        cur_guard_station = guard_station.objects.create(id=id+increment, uid=id+increment, station_name=name,
                                                          xycoordinate=location, remark1=remark1,
                                                          remark2=remark2, remark3=remark3,
                                                          sectionid=section_id)
@@ -103,7 +103,8 @@ def station_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 phone = cur_faculty.mobile
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
-                cur_guard_admin = guard_admin.objects.create(uid=item+increment, username=username, duties=duties,
+                count = guard_admin.objects.count()
+                cur_guard_admin = guard_admin.objects.create(id=item+increment+count, uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
                                                              category='3', mainid=instance.id + increment)
@@ -150,7 +151,7 @@ def create_update_section(sender, instance, created, **kwargs):
             cur_guard_road = guard_road.objects.get(uid=road_id)
             cur_guard_road.sectionnum = cur_guard_road.sectionnum + 1
             cur_guard_road.save()
-        cur_guard_section = guard_section.objects.create(uid=id+increment, section_name=name,
+        cur_guard_section = guard_section.objects.create(id=id+increment, uid=id+increment, section_name=name,
                                                          section_begin=start_place, section_end=end_place,
                                                          xycoordinate=xy_coordinate,roadid=road_id, remark1=remark1,
                                                          remark2=remark2, remark3=remark3)
@@ -221,7 +222,8 @@ def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 phone = cur_faculty.mobile
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
-                cur_guard_admin = guard_admin.objects.create(uid=item+increment, username=username, duties=duties,
+                count = guard_admin.objects.count()
+                cur_guard_admin = guard_admin.objects.create(id=item+increment+count, uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
                                                              category='2', mainid=instance.id + increment)
@@ -269,7 +271,7 @@ def create_update_road(sender, instance, created, **kwargs):
         remark1 = instance.remark1
         remark2 = instance.remark2
         remark3 = instance.remark3
-        cur_guard_road = guard_road.objects.create(uid=id+increment, road_name=name,road_begin=start_place,
+        cur_guard_road = guard_road.objects.create(id=id+increment, uid=id+increment, road_name=name,road_begin=start_place,
                                                    road_end=end_place, areaid=district_id, roadlength=length,
                                                    remark1=remark1, remark2=remark2, remark3=remark3)
         cur_guard_road.save()
@@ -308,7 +310,7 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 order_list = 2
             if faculty_type == 'trans':
                 print('trans')
-                duty_name = u'执行路长(交通)'
+                duty_name = u'执行路长(交管)'
                 order_list = 3
             if faculty_type == 'poli':
                 print('trans')
@@ -331,7 +333,8 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 phone = cur_faculty.mobile
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
-                cur_guard_admin = guard_admin.objects.create(uid=item+increment, username=username, duties=duties,
+                count = guard_admin.objects.count()
+                cur_guard_admin = guard_admin.objects.create(id=item+increment+count, uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
                                                              category='1', mainid=instance.id + increment)
@@ -367,7 +370,6 @@ signals.m2m_changed.connect(road_faculty_change, sender=Road.exec_chief_armed_po
 
 @receiver(signals.post_save, sender=ServiceLine)
 def create_update_service_line(sender, instance, created, **kwargs):
-    generate_service_line_points(instance.id)
     if created:
         print('service_line_created')
         id = instance.id
@@ -381,7 +383,7 @@ def create_update_service_line(sender, instance, created, **kwargs):
         else:
             direction = '1'
             used = '1'
-        cur_guard_line = guard_line.objects.create(uid=id+increment, name=name, begins=startPlace, used=used,
+        cur_guard_line = guard_line.objects.create(id=id+increment, uid=id+increment, name=name, begins=startPlace, used=used,
                                                    ends=endPlace, qwid=id+increment, direction=direction)
         cur_guard_line.save()
     else:
@@ -391,5 +393,11 @@ def create_update_service_line(sender, instance, created, **kwargs):
         startPlace = instance.startPlace
         endPlace = instance.endPlace
         enabled = str(int(instance.enabled))
-        guard_line.objects.filter(uid=id+increment).update(name=name, begins=startPlace,
-                                                           ends=endPlace, enabled=enabled)
+        print('before update')
+        print(id+increment)
+        cur_guard_line = guard_line.objects.filter(uid=id+increment)
+        print(cur_guard_line.first().name)
+        cur_guard_line.update(name=name, begins=startPlace, ends=endPlace, enabled=enabled)
+
+    print('i have compolished update')
+    generate_service_line_points(instance.id)

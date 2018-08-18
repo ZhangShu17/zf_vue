@@ -73,11 +73,13 @@ class SectionView(APIView):
             district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
+            road_name = ''
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if road_id:
+            road_name = Road.objects.get(id = road_id).name
             cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('-id')
         else:
             cur_section = Section.objects.filter(enabled=1).order_by('-id')
@@ -96,6 +98,7 @@ class SectionView(APIView):
             section_lists = paginator.page(page)
         serializer = SectionSerializer(section_lists, many=True)
         response_data['data'] = {}
+        response_data['data']['roadName'] = road_name
         response_data['data']['curPage'] = page
         response_data['data']['listCount'] = paginator.count
         response_data['data']['list'] = serializer.data

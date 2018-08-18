@@ -33,6 +33,9 @@ class Faculty(models.Model):
     duty = models.CharField(max_length=30, verbose_name=unicode('职务'), null=True)
     channel = models.CharField(max_length=10, verbose_name=unicode('电台信道'), null=True)
     call_sign = models.CharField(max_length=10, verbose_name=unicode('电台呼号'), null=True)
+    level = models.IntegerField(default=0, null=True)
+    role = models.IntegerField(default=0, null=True)
+    main_id = models.IntegerField(default=0, null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -82,6 +85,8 @@ class Road(models.Model):
     remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
+    channel = models.CharField(max_length=10, default='1W', null=True)
+    call_sign = models.CharField(max_length=10, null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -94,7 +99,7 @@ class Section(models.Model):
     name = models.CharField(max_length=100, verbose_name=unicode('路段名称'), null=True)
     start_place = models.CharField(max_length=50, verbose_name=unicode('起点地名'), null=True)
     end_place = models.CharField(max_length=50, verbose_name=unicode('终点地名'), null=True)
-    xy_coordinate = models.CharField(max_length=4000, default='')
+    xy_coordinate = models.CharField(max_length=1000, default='')
     road = models.ForeignKey(to=Road, related_name='Road_Section', null=True, on_delete=models.SET_NULL)
     # 段长
     chief = models.ManyToManyField(to=Faculty, related_name='Faculty_Section_Chief')
@@ -113,6 +118,8 @@ class Section(models.Model):
     remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
+    channel = models.CharField(max_length=10, default='1W', null=True)
+    call_sign = models.CharField(max_length=10, null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -136,6 +143,8 @@ class Station(models.Model):
     remark2 = models.CharField(max_length=100, default='', null=True)
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
+    channel = models.CharField(max_length=10, default='1W', null=True)
+    call_sign = models.CharField(max_length=10, null=True)
     enabled = models.BooleanField(default=True)
 
     class Meta:
