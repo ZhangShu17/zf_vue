@@ -29,6 +29,8 @@ class SectionView(APIView):
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
             xy_coordinate = request.POST.get('XYCOORDINATE', '')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -39,8 +41,9 @@ class SectionView(APIView):
 
         if road_id:
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
-                                                 xy_coordinate=xy_coordinate, road_id=road_id,
-                                                 remark1=remark_1, remark2=remark_2, remark3=remark_3, district_id=district_id)
+                                                 xy_coordinate=xy_coordinate, road_id=road_id, channel=channel,
+                                                 call_sign=call_sign, remark1=remark_1, remark2=remark_2,
+                                                 remark3=remark_3, district_id=district_id)
 
             try:
                 with transaction.atomic():
@@ -52,8 +55,9 @@ class SectionView(APIView):
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
             update_road_section_ids(road_id, cur_section.id, True)
         else:
-            cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
-                                                 xy_coordinate=xy_coordinate, remark1=remark_1,
+            cur_section = Section.objects.create(name=name, start_place=start_place,
+                                                 end_place=end_place, xy_coordinate=xy_coordinate,
+                                                 remark1=remark_1, channel=channel, call_sign=call_sign,
                                                  remark2=remark_2, remark3=remark_3, district_id=district_id)
             try:
                 with transaction.atomic():
@@ -114,6 +118,8 @@ class SectionView(APIView):
             start_place = request.POST.get('startPlace', '')
             end_place = request.POST.get('endPlace', '')
             xy_coordinate = request.POST.get('XYCOORDINATE', '')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -130,6 +136,10 @@ class SectionView(APIView):
             cur_section.end_place = end_place
         if xy_coordinate:
             cur_section.xy_coordinate = xy_coordinate
+        if channel:
+            cur_section.channel = channel
+        if call_sign:
+            cur_section.call_sign = call_sign
         if remark_1:
             cur_section.remark1 = remark_1
         if remark_2:
@@ -302,6 +312,9 @@ class DeleteSectionFacultyView(APIView):
             cur_section.exec_chief_trans.remove(cur_faculty)
         if faculty_type == 4:
             cur_section.exec_chief_armed_poli.remove(cur_faculty)
+        cur_faculty.channel = ''
+        cur_faculty.call_sign = ''
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -405,13 +418,17 @@ class FacultyNotInSection(APIView):
         bureau_list = cur_section.exec_chief_sub_bureau.all().values_list('id', flat=True)
         trans_list = cur_section.exec_chief_trans.all().values_list('id', flat=True)
         poli_list = cur_section.exec_chief_armed_poli.all().values_list('id', flat=True)
-        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=2, role=1, main_id=section_id).\
             exclude(id__in=chief_list).order_by('id')
-        cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                 level=2, role=2, main_id=section_id).\
             exclude(id__in=bureau_list).order_by('id')
-        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=2, role=3, main_id=section_id).\
             exclude(id__in=trans_list).order_by('id')
-        cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                               level=2, role=4, main_id=section_id).\
             exclude(id__in=poli_list).order_by('id')
         response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
         response_data['data']['execChiefSubBureauList'] = FacultySerializer(cur_bureau_list, many=True).data
@@ -440,6 +457,9 @@ class FacultyNotInSection(APIView):
             cur_section.exec_chief_trans.add(cur_faculty)
         if faculty_type == 4:
             cur_section.exec_chief_armed_poli.add(cur_faculty)
+        cur_faculty.channel = cur_section.channel
+        cur_faculty.call_sign = cur_section.call_sign
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -455,6 +475,8 @@ class CopySectionView(APIView):
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
             xy_coordinate = request.POST.get('XYCOORDINATE', '')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -465,7 +487,7 @@ class CopySectionView(APIView):
         cur_section = Section.objects.get(id=section_id)
         district_id = cur_section.district_id
         road_id = cur_section.road_id
-        new_section = Section.objects.create(name=name, start_place=start_place,
+        new_section = Section.objects.create(name=name, start_place=start_place, channel=channel, call_sign=call_sign,
                                              end_place=end_place, xy_coordinate=xy_coordinate,
                                              remark1=remark_1, remark2=remark_2, remark3=remark_3,
                                              district_id=district_id)

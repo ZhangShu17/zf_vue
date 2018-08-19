@@ -11,7 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer, FacultySerializer
 from django.db.models import Q
 from api_tools.token import SystemAuthentication
-from api_tools.api_tools import update_service_line_road_ids
+from api_tools.api_tools import update_service_line_road_ids, update_service_submit
 
 
 class RoadView(APIView):
@@ -27,6 +27,8 @@ class RoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -34,8 +36,8 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_road = Road.objects.create(name=name, length=length, start_place=start_place,
-                                       end_place=end_place, remark1=remark_1, remark2=remark_2,
+        cur_road = Road.objects.create(name=name, length=length, start_place=start_place, channel=channel,
+                                       call_sign=call_sign, end_place=end_place, remark1=remark_1, remark2=remark_2,
                                        remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():
@@ -103,6 +105,8 @@ class RoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace', '')
             end_place = request.POST.get('endPlace', '')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -118,6 +122,8 @@ class RoadView(APIView):
         cur_road.remark1 = remark_1
         cur_road.remark2 = remark_2
         cur_road.remark3 = remark_3
+        cur_road.channel = channel
+        cur_road.call_sign = call_sign
         cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
@@ -246,6 +252,9 @@ class DeleteRoadFaculty(APIView):
             cur_road.exec_chief_trans.remove(cur_faculty)
         if faculty_type == 4:
             cur_road.exec_chief_armed_poli.remove(cur_faculty)
+        cur_faculty.channel = ''
+        cur_faculty.call_sign = ''
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -323,13 +332,15 @@ class RoadNotInToServiceLineView(APIView):
         temp2 = Q()
         temp2.connector = 'AND'
         temp2.children.append(('district_id__in', service_line_district_list))
+        temp2.children.append(('Road_Service__isnull', True))
         query1.add(temp2, 'AND')
 
-        query2 = Q()
-        query2.connector = 'AND'
-        query2.children.append(('id__in', service_line_road_list))
+        # query2 = Q()
+        # query2.connector = 'AND'
+        # query2.children.append(('id__in', service_line_road_list))
 
-        road_list = Road.objects.filter(query1).exclude(query2).order_by('id')
+        # road_list = Road.objects.filter(query1).exclude(query2).order_by('id')
+        road_list = Road.objects.filter(query1).order_by('-id')
         serializer = RoadSerializer(road_list, many=True)
         response_data['dataList'] = serializer.data
         return Response(response_data, status.HTTP_200_OK)
@@ -365,6 +376,7 @@ class RoadNotInToServiceLineView(APIView):
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         cur_road = Road.objects.get(id=road_id)
         cur_service_line.road.remove(cur_road)
+        update_service_submit(service_line_id, road_id)
         # 更新serviceline的roadids
         update_service_line_road_ids(service_line_id, road_id, False)
         return Response(response_data, status.HTTP_200_OK)
@@ -394,13 +406,17 @@ class FacultyNotInRoad(APIView):
         bureau_list = cur_road.exec_chief_sub_bureau.all().values_list('id', flat=True)
         trans_list = cur_road.exec_chief_trans.all().values_list('id', flat=True)
         poli_list = cur_road.exec_chief_armed_poli.all().values_list('id', flat=True)
-        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=1, role=1, main_id=road_id).\
             exclude(id__in=chief_list).order_by('id')
-        cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                 level=1, role=2, main_id=road_id).\
             exclude(id__in=bureau_list).order_by('id')
-        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=1, role=3, main_id=road_id).\
             exclude(id__in=trans_list).order_by('id')
-        cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                               level=1, role=4, main_id=road_id).\
             exclude(id__in=poli_list).order_by('id')
         response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
         response_data['data']['execChiefSubBureauList'] = FacultySerializer(cur_bureau_list, many=True).data
@@ -429,6 +445,9 @@ class FacultyNotInRoad(APIView):
             cur_road.exec_chief_trans.add(cur_faculty)
         if faculty_type == 4:
             cur_road.exec_chief_armed_poli.add(cur_faculty)
+        cur_faculty.channel = cur_road.channel
+        cur_faculty.call_sign = cur_road.call_sign
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -444,6 +463,8 @@ class CopyRoadView(APIView):
             length = request.POST.get('length', '')
             start_place = request.POST.get('startPlace')
             end_place = request.POST.get('endPlace')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -454,8 +475,8 @@ class CopyRoadView(APIView):
         cur_road = Road.objects.get(id=road_id)
         district_id = cur_road.district_id
         new_road = Road.objects.create(name=name, start_place=start_place, end_place=end_place,
-                                       length=length, remark1=remark_1, remark2=remark_2,
-                                       remark3=remark_3, district_id=district_id)
+                                       length=length, remark1=remark_1, remark2=remark_2, channel=channel,
+                                       call_sign=call_sign, remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():
                 new_road.save()

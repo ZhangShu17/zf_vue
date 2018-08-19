@@ -104,6 +104,7 @@ class FacultySerializer(serializers.ModelSerializer):
 class RoadSerializer(serializers.ModelSerializer):
     section_number = serializers.SerializerMethodField()
     station_number = serializers.SerializerMethodField()
+
     class Meta:
         model = Road
         fields = (
@@ -114,6 +115,8 @@ class RoadSerializer(serializers.ModelSerializer):
             'end_place',
             'section_number',
             'station_number',
+            'channel',
+            'call_sign',
             'remark1',
             'remark2',
             'remark3'
@@ -163,6 +166,8 @@ class SectionSerializer(serializers.ModelSerializer):
             'start_place',
             'end_place',
             'xy_coordinate',
+            'channel',
+            'call_sign',
             'station_number',
             'remark1',
             'remark2',
@@ -281,6 +286,7 @@ class ServiceLineSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(many=True)
     road = RoadSerializer(many=True)
     roadCount = serializers.SerializerMethodField()
+
     class Meta:
         model = ServiceLine
         fields = (
@@ -295,8 +301,13 @@ class ServiceLineSerializer(serializers.ModelSerializer):
             'district',
             'road',
             'roadCount',
+            'submit_district',
         )
 
     def get_roadCount(self, obj):
-        return obj.road.filter(enabled=True).count()
+        district_id = int(self.context.get('district_id'))
+        if district_id:
+            return obj.road.filter(enabled=True, district_id=district_id).count()
+        else:
+            return obj.road.filter(enabled=True).count()
 

@@ -69,7 +69,8 @@ class ServiceLineView(APIView):
             cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('-time')
         else:
             cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('-time')
-        response_data['data'] = ServiceLineSerializer(cur_service_line, many=True).data
+        response_data['data'] = ServiceLineSerializer(cur_service_line, many=True,
+                                                      context={'district_id': district_id}).data
         return Response(response_data, status.HTTP_200_OK)
 
     def put(self, request):
@@ -118,6 +119,35 @@ class ServiceLineView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         cur_service_line.enabled = False
+        cur_service_line.save()
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class SubmitServiceLineView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.POST.get('serviceLineId'))
+            district_id = int(request.POST.get('districtId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        submit_district = cur_service_line.submit_district
+        if not submit_district:
+            submit_district = submit_district + str(district_id)
+        else:
+            district_list = submit_district.split('-')
+            if str(district_id) in district_list:
+                pass
+            else:
+                district_list.append(str(district_id))
+                submit_district = '-'.join(district_list)
+        cur_service_line.submit_district = submit_district
         cur_service_line.save()
         return Response(response_data, status.HTTP_200_OK)
 

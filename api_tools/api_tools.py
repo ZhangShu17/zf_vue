@@ -99,3 +99,19 @@ def handle(point_list):
         begin_point = point_list1[0] + ',' + point_list1[1]
         end_point = point_list1[-2] + ',' + point_list1[-1]
     return begin_point, end_point, points_str
+
+
+def update_service_submit(service_line_id, road_id):
+    cur_service = ServiceLine.objects.get(id=service_line_id)
+    cur_road = Road.objects.get(id=road_id)
+    district_id_ser = cur_service.submit_district.split('-')
+    district_id_road = cur_road.district_id
+    road_id_list = cur_service.road.values_list('district_id', flat=True).distinct()
+    if district_id_road in road_id_list:
+        pass
+    else:
+        district_id_ser.remove(str(district_id_road))
+        if len(district_id_ser):
+            cur_service.submit_district = '-'.join(district_id_ser)
+        else: cur_service.submit_district = ''
+        cur_service.save()

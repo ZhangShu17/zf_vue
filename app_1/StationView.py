@@ -112,6 +112,8 @@ class StationView(APIView):
         return Response(response_data, status.HTTP_200_OK)
 
     def put(self, request):
+        print('=====================')
+        print(request.POST)
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
@@ -128,6 +130,7 @@ class StationView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_station = Station.objects.get(id=station_id)
+        print(call_sign)
         if name:
             cur_station.name = name
         if location:
@@ -142,6 +145,7 @@ class StationView(APIView):
             cur_station.remark2 = remark_2
         if remark_3:
             cur_station.remark3 = remark_3
+        cur_station.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -269,6 +273,9 @@ class DeleteStationFacultyView(APIView):
             cur_station.chief.remove(cur_faculty)
         if faculty_type == 3:
             cur_station.exec_chief_trans.remove(cur_faculty)
+        cur_faculty.channel = ''
+        cur_faculty.call_sign = ''
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -367,9 +374,11 @@ class FacultyNotInStation(APIView):
         district_id = cur_station.district_id
         chief_list = cur_station.chief.all().values_list('id', flat=True)
         trans_list = cur_station.exec_chief_trans.all().values_list('id', flat=True)
-        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=3, role=1, main_id=station_id).\
             exclude(id__in=chief_list).order_by('id')
-        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id).\
+        cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id,
+                                                level=3, role=2, main_id=station_id).\
             exclude(id__in=trans_list).order_by('id')
         response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
         response_data['data']['execChiefTransList'] = FacultySerializer(cur_trans_list, many=True).data
@@ -392,6 +401,11 @@ class FacultyNotInStation(APIView):
             cur_station.chief.add(cur_faculty)
         if faculty_type == 3:
             cur_station.exec_chief_trans.add(cur_faculty)
+        channel = cur_station.channel
+        call_sign = cur_station.call_sign
+        cur_faculty.channel = channel
+        cur_faculty.call_sign = call_sign
+        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -405,6 +419,8 @@ class CopyStationView(APIView):
             station_id = int(request.POST.get('stationId'))
             name = request.POST.get('name')
             location = request.POST.get('location')
+            channel = request.POST.get('channel', '')
+            call_sign = request.POST.get('callSign', '')
             remark_1 = request.POST.get('remark1', '')
             remark_2 = request.POST.get('remark2', '')
             remark_3 = request.POST.get('remark3', '')
@@ -415,8 +431,9 @@ class CopyStationView(APIView):
         cur_station = Station.objects.get(id=station_id)
         district_id = cur_station.district_id
         section_id = cur_station.section_id
-        new_station = Station.objects.create(name=name, location=location, remark1=remark_1,
-                                             remark2=remark_2, remark3=remark_3, district_id=district_id)
+        new_station = Station.objects.create(name=name, location=location, channel=channel,
+                                             remark1=remark_1, call_sign=call_sign, remark2=remark_2,
+                                             remark3=remark_3, district_id=district_id)
         try:
             with transaction.atomic():
                 new_station.save()

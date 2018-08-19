@@ -66,6 +66,8 @@ urlpatterns = [
     # 勤务路线
     url(r'^server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
 
+    # 分局提交勤務路綫
+    url(r'^server_line/submit?$',ServiceLine.SubmitServiceLineView.as_view(), name='server_line_submit'),
 
     # 未添加到勤务路线的道路,
     url(r'^road/tobe_service_line?$', RoadView.RoadNotInToServiceLineView.as_view(), name='tobe_service_line'),

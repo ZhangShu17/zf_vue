@@ -51,6 +51,7 @@ class ServiceLine(models.Model):
     district = models.ManyToManyField(to=District, related_name='District_Service')
     roadids = models.CharField(max_length=400, default='')
     road = models.ManyToManyField(to='Road', related_name='Road_Service')
+    submit_district = models.CharField(max_length=20, default='')
     remark1 = models.CharField(max_length=100, default='')
     remark2 = models.CharField(max_length=100, default='')
     remark3 = models.CharField(max_length=100, default='')
@@ -86,11 +87,8 @@ class Road(models.Model):
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
     channel = models.CharField(max_length=10, default='1W', null=True)
-    call_sign = models.CharField(max_length=10, null=True)
+    call_sign = models.CharField(max_length=10, default='', null=True)
     enabled = models.BooleanField(default=True)
-
-    class Meta:
-        unique_together = (('name', 'start_place', 'end_place'),)
 
 
 # 路段表
@@ -119,11 +117,8 @@ class Section(models.Model):
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
     channel = models.CharField(max_length=10, default='1W', null=True)
-    call_sign = models.CharField(max_length=10, null=True)
+    call_sign = models.CharField(max_length=10, default='', null=True)
     enabled = models.BooleanField(default=True)
-
-    class Meta:
-        unique_together = (('name', 'start_place', 'end_place'),)
 
 
 # 岗哨表
@@ -144,8 +139,6 @@ class Station(models.Model):
     # 备注3
     remark3 = models.CharField(max_length=100, default='', null=True)
     channel = models.CharField(max_length=10, default='1W', null=True)
-    call_sign = models.CharField(max_length=10, null=True)
+    call_sign = models.CharField(max_length=10, default='', null=True)
     enabled = models.BooleanField(default=True)
 
-    class Meta:
-        unique_together = (('name', 'location'),)
