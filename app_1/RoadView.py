@@ -63,11 +63,12 @@ class RoadView(APIView):
             district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
-            service_line_name = ''
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+
+        service_line_name = ''
         if service_line_id:
             cur_service_line = ServiceLine.objects.get(id=service_line_id)
             service_line_name = cur_service_line.name

@@ -112,8 +112,6 @@ class StationView(APIView):
         return Response(response_data, status.HTTP_200_OK)
 
     def put(self, request):
-        print('=====================')
-        print(request.POST)
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:

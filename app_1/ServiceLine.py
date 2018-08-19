@@ -58,6 +58,8 @@ class ServiceLineView(APIView):
         try:
             district_id = int(request.GET.get('districtId', 0))
             service_line_id = int(request.GET.get('serviceLineId', 0))
+            cur_per_page = int(request.GET.get('perPage', 20))
+            page = int(request.GET.get('page', 1))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
@@ -69,8 +71,25 @@ class ServiceLineView(APIView):
             cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('-time')
         else:
             cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('-time')
-        response_data['data'] = ServiceLineSerializer(cur_service_line, many=True,
-                                                      context={'district_id': district_id}).data
+
+        paginator = Paginator(cur_service_line, cur_per_page)
+        page_count = paginator.num_pages
+
+        try:
+            service_lists = paginator.page(page)
+        except PageNotAnInteger:
+            page = 1
+            service_lists = paginator.page(page)
+        except EmptyPage:
+            page = paginator.num_pages
+            service_lists = paginator.page(page)
+        serializer = ServiceLineSerializer(cur_service_line, many=True,
+                                                      context={'district_id': district_id})
+        response_data['data'] = {}
+        response_data['data']['curPage'] = page
+        response_data['data']['listCount'] = paginator.count
+        response_data['data']['list'] = serializer.data
+        response_data['data']['pageCount'] = page_count
         return Response(response_data, status.HTTP_200_OK)
 
     def put(self, request):
