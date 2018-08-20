@@ -8,7 +8,7 @@ from models import Road, Faculty, Section
 from t.models import guard_road
 from constants import error_constants
 from django.db.models import Q
-from api_tools.api_tools import generate_error_response
+from api_tools.api_tools import generate_error_response,update_faculty_channel_call_sign
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
@@ -147,6 +147,7 @@ class SectionView(APIView):
         if remark_3:
             cur_section.remark3 = remark_3
         cur_section.save()
+        update_faculty_channel_call_sign(2, section_id)
         return Response(response_data, status.HTTP_200_OK)
 
 

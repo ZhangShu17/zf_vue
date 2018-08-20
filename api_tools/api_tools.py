@@ -123,3 +123,58 @@ def update_service_submit(service_line_id, road_id):
         else:
             cur_service.submit_district = ''
         cur_service.save()
+
+
+def update_faculty_channel_call_sign(level, element_id):
+    if level == 1:
+        cur_road = Road.objects.get(id=element_id)
+        channel = cur_road.channel
+        call_sign = cur_road.call_sign
+        for item in cur_road.chief.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_road.exec_chief_sub_bureau.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_road.exec_chief_trans.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_road.exec_chief_armed_poli.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+    if level == 2:
+        cur_section = Section.objects.get(id=element_id)
+        channel = cur_section.channel
+        call_sign = cur_section.call_sign
+        for item in cur_section.chief.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_section.exec_chief_sub_bureau.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_section.exec_chief_trans.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_section.exec_chief_armed_poli.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+    if level == 3:
+        cur_station = Station.objects.get(id=element_id)
+        channel = cur_station.channel
+        call_sign = cur_station.call_sign
+        for item in cur_station.chief.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()
+        for item in cur_station.exec_chief_trans.all():
+            item.channel = channel
+            item.call_sign = call_sign
+            item.save()

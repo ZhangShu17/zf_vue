@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Road, Faculty, ServiceLine
 from constants import error_constants
-from api_tools.api_tools import generate_error_response
+from api_tools.api_tools import generate_error_response, update_faculty_channel_call_sign
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer, FacultySerializer
 from django.db.models import Q
@@ -126,6 +126,7 @@ class RoadView(APIView):
         cur_road.channel = channel
         cur_road.call_sign = call_sign
         cur_road.save()
+        update_faculty_channel_call_sign(1, road_id)
         return Response(response_data, status.HTTP_200_OK)
 
     # def delete(self, request):

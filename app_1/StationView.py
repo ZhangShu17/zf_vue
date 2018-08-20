@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Road, Faculty, Section, Station
 from constants import error_constants
-from api_tools.api_tools import generate_error_response
+from api_tools.api_tools import generate_error_response, update_faculty_channel_call_sign
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import StationSerializer, SingleStationSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
@@ -128,7 +128,6 @@ class StationView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_station = Station.objects.get(id=station_id)
-        print(call_sign)
         if name:
             cur_station.name = name
         if location:
@@ -138,12 +137,13 @@ class StationView(APIView):
         if call_sign:
             cur_station.call_sign = call_sign
         if remark_1:
-            cur_station.remark1=remark_1
+            cur_station.remark1 = remark_1
         if remark_2:
             cur_station.remark2 = remark_2
         if remark_3:
             cur_station.remark3 = remark_3
         cur_station.save()
+        update_faculty_channel_call_sign(3, station_id)
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
