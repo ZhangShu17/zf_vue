@@ -212,7 +212,8 @@ class SectionFacultyView(APIView):
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
                                                  level=2, role=faculty_type, main_id=section_id,
-                                                 district_id=district_id, channel=channel, call_sign=call_sign)
+                                                 district_id=district_id, channel=cur_section.channel,
+                                                 call_sign=cur_section.call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()

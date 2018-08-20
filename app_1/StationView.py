@@ -202,7 +202,8 @@ class StationFacultyView(APIView):
                 faculty_type = 2
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
                                                  level=3, role=faculty_type, main_id=station_id,
-                                                 district_id=district_id, channel=channel, call_sign=call_sign)
+                                                 district_id=district_id, channel=cur_station.channel,
+                                                 call_sign=cur_station.call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()

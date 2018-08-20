@@ -194,7 +194,8 @@ class RoadFacultyView(APIView):
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
                                                  level=1, role=faculty_type, main_id=road_id,
-                                                 district_id=district_id, channel=channel, call_sign=call_sign)
+                                                 district_id=district_id, channel=cur_road.channel,
+                                                 call_sign=cur_road.call_sign)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
