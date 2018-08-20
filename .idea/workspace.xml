@@ -2,25 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="133deb6d-226a-4bcb-8f9a-5ca490442bfc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pro_1.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/pro_1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/database_reset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_tools/api_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_tools/api_tools.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0002_auto_20180818_1304.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0003_auto_20180818_1649.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0004_auto_20180818_2136.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0005_auto_20180818_2151.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/migrations/0002_auto_20180820_1502.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0006_auto_20180818_2200.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/migrations/0007_serviceline_submit_district.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_1/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/RoadView.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/RoadView.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/SectionView.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/SectionView.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/StationView.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/StationView.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pro_1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pro_1/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/signals/handlers1.py" beforeDir="false" afterPath="$PROJECT_DIR$/signals/handlers1.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +23,9 @@
     <SUITE FILE_PATH="coverage/zf_vue$account.coverage" NAME="account Coverage Results" MODIFIED="1534435307612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/pro_1$api_script.coverage" NAME="api_script Coverage Results" MODIFIED="1533205598430" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/pro_1$token.coverage" NAME="token Coverage Results" MODIFIED="1532848973635" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
-    <SUITE FILE_PATH="coverage/pro_1$database_connect.coverage" NAME="database_connect Coverage Results" MODIFIED="1534469253047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/pro_1$database_connect.coverage" NAME="database_connect Coverage Results" MODIFIED="1534753859495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/pro_1$account.coverage" NAME="account Coverage Results" MODIFIED="1534063531301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/pro_1$database_reset.coverage" NAME="database_reset Coverage Results" MODIFIED="1534758192502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/zf_vue$database_connect.coverage" NAME="database_connect Coverage Results" MODIFIED="1534417393395" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
   </component>
   <component name="DatabaseView">
@@ -62,7 +54,7 @@
     <session id="2005882720">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="42" />
+          <entry key="project.closed" value="43" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="4" />
           <entry key="project.open.time.10" value="17" />
@@ -73,15 +65,16 @@
           <entry key="project.open.time.22" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.31" value="1" />
+          <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.8" value="3" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="53" />
+          <entry key="project.opened" value="54" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="html" value="1" />
-          <entry key="py" value="339" />
+          <entry key="py" value="348" />
           <entry key="requirements" value="1" />
           <entry key="txt" value="11" />
         </counts>
@@ -90,27 +83,139 @@
         <counts>
           <entry key="HTML" value="1" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="339" />
+          <entry key="Python" value="348" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="Django Console" value="13" />
-          <entry key="py" value="36000" />
+          <entry key="Django Console" value="18" />
+          <entry key="py" value="36551" />
           <entry key="txt" value="25" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="25" />
-          <entry key="Python" value="36005" />
+          <entry key="Python" value="36561" />
           <entry key="SQL" value="8" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/signals/handlers1.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1950">
+              <caret line="402" column="38" lean-forward="true" selection-start-line="402" selection-start-column="38" selection-end-line="402" selection-end-column="38" />
+              <folding>
+                <element signature="e#522#1623#0" />
+                <element signature="e#1739#3280#0" />
+                <element signature="e#3366#5855#0" />
+                <element signature="e#6148#8467#0" />
+                <element signature="e#8553#11503#0" />
+                <element signature="e#11987#13633#0" />
+                <element signature="e#13716#16666#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app_1/RoadView.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="174">
+              <caret line="191" column="44" lean-forward="true" selection-start-line="191" selection-start-column="44" selection-end-line="191" selection-end-column="44" />
+              <folding>
+                <element signature="e#700#6794#0" />
+                <element signature="e#6847#7566#0" />
+                <element signature="e#10766#11993#0" />
+                <element signature="e#12031#12954#0" />
+                <element signature="e#12991#13720#0" />
+                <element signature="e#13770#17448#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app_1/SectionView.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="214" column="49" selection-start-line="214" selection-start-column="49" selection-end-line="214" selection-end-column="49" />
+              <folding>
+                <element signature="e#730#7167#0" />
+                <element signature="e#7208#8471#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app_1/StationView.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="204" column="49" selection-start-line="204" selection-start-column="49" selection-end-line="204" selection-end-column="49" />
+              <folding>
+                <element signature="e#683#7888#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pro_1/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2150">
+              <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/account.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="650">
+              <caret line="26" selection-start-line="26" selection-end-line="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/database_connect.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/database_reset.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="750">
+              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app_1/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="25">
+              <caret line="45" column="6" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="6" />
+              <folding>
+                <element signature="e#24#63#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -170,7 +275,6 @@
         <option value="$PROJECT_DIR$/test/database_connect.py" />
         <option value="$PROJECT_DIR$/t/models.py" />
         <option value="$PROJECT_DIR$/signals/handlers1.py" />
-        <option value="$PROJECT_DIR$/pro_1/settings.py" />
         <option value="$PROJECT_DIR$/constants/constants.py" />
         <option value="$PROJECT_DIR$/app_1/LoginView.py" />
         <option value="$PROJECT_DIR$/app_1/Faculty_View.py" />
@@ -179,10 +283,12 @@
         <option value="$PROJECT_DIR$/Serializers/serializers.py" />
         <option value="$PROJECT_DIR$/test/account.py" />
         <option value="$PROJECT_DIR$/api_tools/api_tools.py" />
-        <option value="$PROJECT_DIR$/app_1/RoadView.py" />
         <option value="$PROJECT_DIR$/app_1/ServiceLine.py" />
+        <option value="$PROJECT_DIR$/app_1/RoadView.py" />
         <option value="$PROJECT_DIR$/app_1/SectionView.py" />
         <option value="$PROJECT_DIR$/app_1/StationView.py" />
+        <option value="$PROJECT_DIR$/pro_1/settings.py" />
+        <option value="$PROJECT_DIR$/test/database_reset.py" />
       </list>
     </option>
   </component>
@@ -198,13 +304,16 @@
     <option name="width" value="1382" />
     <option name="height" value="744" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <autoscrollFromSource ProjectPane="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -212,11 +321,20 @@
               <item name="pro_1" type="b2602c69:ProjectViewProjectNode" />
               <item name="pro_1" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="pro_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pro_1" type="462c0819:PsiDirectoryNode" />
+              <item name="pro_1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pro_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pro_1" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -239,7 +357,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.database_connect">
+  <component name="RunManager" selected="Python.database_reset">
     <configuration name="account" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pro_1" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -306,6 +424,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="database_reset" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pro_1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/database_reset.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="token" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pro_1" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -328,14 +468,40 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="pro_1" type="Python.DjangoServer" factoryName="Django server">
+      <module name="pro_1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.api_script" />
       <item itemvalue="Python.database_connect" />
       <item itemvalue="Python.account" />
       <item itemvalue="Python.token" />
+      <item itemvalue="Django server.pro_1" />
+      <item itemvalue="Python.database_reset" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.database_reset" />
         <item itemvalue="Python.database_connect" />
         <item itemvalue="Python.account" />
         <item itemvalue="Python.token" />
@@ -357,9 +523,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19515885" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19818456" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -370,7 +537,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.33788395" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.26279864" />
       <window_info anchor="bottom" id="Python Console" order="9" weight="0.32935154" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
@@ -486,13 +653,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/database_connect.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="2" column="16" lean-forward="true" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/t/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1550">
@@ -514,13 +674,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pro_1/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2165">
-          <caret line="56" column="27" lean-forward="true" selection-start-line="56" selection-start-column="27" selection-end-line="56" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app_1/LoginView.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="287">
@@ -535,27 +688,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/RoadView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="92" column="68" lean-forward="true" selection-start-line="92" selection-start-column="68" selection-end-line="92" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app_1/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="69" column="102" selection-start-line="69" selection-start-column="102" selection-end-line="69" selection-end-column="102" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -566,31 +702,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/account.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app_1/ServiceLine.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-190">
           <caret line="89" column="60" lean-forward="true" selection-start-line="89" selection-start-column="60" selection-end-line="89" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/SectionView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-418">
-          <caret line="83" column="22" selection-start-line="83" selection-start-column="22" selection-end-line="83" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/StationView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="114" selection-start-line="114" selection-end-line="114" />
         </state>
       </provider>
     </entry>
@@ -604,10 +719,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app_1/Faculty_View.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="163" column="58" selection-start-line="163" selection-start-column="58" selection-end-line="163" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/signals/handlers1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="403" column="15" selection-start-line="403" selection-start-column="15" selection-end-line="403" selection-end-column="15" />
+        <state relative-caret-position="1950">
+          <caret line="402" column="38" lean-forward="true" selection-start-line="402" selection-start-column="38" selection-end-line="402" selection-end-column="38" />
           <folding>
             <element signature="e#522#1623#0" />
             <element signature="e#1739#3280#0" />
@@ -620,13 +742,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/Faculty_View.py">
+    <entry file="file://$PROJECT_DIR$/app_1/RoadView.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="163" column="58" selection-start-line="163" selection-start-column="58" selection-end-line="163" selection-end-column="58" />
+        <state relative-caret-position="174">
+          <caret line="191" column="44" lean-forward="true" selection-start-line="191" selection-start-column="44" selection-end-line="191" selection-end-column="44" />
           <folding>
-            <element signature="e#510#6662#0" />
-            <element signature="e#6703#7691#0" />
+            <element signature="e#700#6794#0" />
+            <element signature="e#6847#7566#0" />
+            <element signature="e#10766#11993#0" />
+            <element signature="e#12031#12954#0" />
+            <element signature="e#12991#13720#0" />
+            <element signature="e#13770#17448#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app_1/SectionView.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="214" column="49" selection-start-line="214" selection-start-column="49" selection-end-line="214" selection-end-column="49" />
+          <folding>
+            <element signature="e#730#7167#0" />
+            <element signature="e#7208#8471#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app_1/StationView.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="204" column="49" selection-start-line="204" selection-start-column="49" selection-end-line="204" selection-end-column="49" />
+          <folding>
+            <element signature="e#683#7888#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/account.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="650">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/database_connect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pro_1/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2150">
+          <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app_1/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="45" column="6" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="6" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/database_reset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="750">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
