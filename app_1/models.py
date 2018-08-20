@@ -57,9 +57,6 @@ class ServiceLine(models.Model):
     remark3 = models.CharField(max_length=100, default='')
     enabled = models.BooleanField(default=True)
 
-    class Meta:
-        unique_together = (('name', 'startPlace', 'endPlace', 'time'),)
-
 
 # 路线表
 class Road(models.Model):
