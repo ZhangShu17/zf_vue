@@ -398,6 +398,5 @@ def create_update_service_line(sender, instance, created, **kwargs):
         cur_guard_line = guard_line.objects.filter(uid=id+increment)
         print(cur_guard_line.first().name)
         cur_guard_line.update(name=name, begins=startPlace, ends=endPlace, enabled=enabled)
-
     print('i have compolished update')
     generate_service_line_points(instance.id)
