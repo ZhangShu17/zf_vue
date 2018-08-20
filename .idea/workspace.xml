@@ -2,7 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="133deb6d-226a-4bcb-8f9a-5ca490442bfc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pro_1.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_tools/api_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_tools/api_tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0002_auto_20180818_1304.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0003_auto_20180818_1649.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0004_auto_20180818_2136.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0005_auto_20180818_2151.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/migrations/0002_auto_20180820_1502.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0006_auto_20180818_2200.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/migrations/0007_serviceline_submit_district.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_1/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app_1/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pro_1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pro_1/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/signals/handlers1.py" beforeDir="false" afterPath="$PROJECT_DIR$/signals/handlers1.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -92,52 +110,7 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app_1/Faculty_View.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="163" column="58" lean-forward="true" selection-start-line="163" selection-start-column="58" selection-end-line="163" selection-end-column="58" />
-              <folding>
-                <element signature="e#510#6662#0" />
-                <element signature="e#6703#7691#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/signals/handlers1.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="402" column="15" lean-forward="true" selection-start-line="402" selection-start-column="15" selection-end-line="402" selection-end-column="15" />
-              <folding>
-                <element signature="e#522#1623#0" />
-                <element signature="e#1739#3280#0" />
-                <element signature="e#3366#5855#0" />
-                <element signature="e#6148#8467#0" />
-                <element signature="e#8553#11503#0" />
-                <element signature="e#11987#13633#0" />
-                <element signature="e#13716#16666#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/api_tools/api_tools.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="110" column="12" lean-forward="true" selection-start-line="110" selection-start-column="12" selection-end-line="110" selection-end-column="12" />
-              <folding>
-                <element signature="e#24#63#0" expanded="true" />
-                <marker date="1534657856876" expanded="true" signature="4142:4147" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -166,6 +139,7 @@
       <find>response_data['data']</find>
       <find>in</find>
       <find>in</find>
+      <find>pass</find>
     </findStrings>
     <dirStrings>
       <dir>E:\project_django\pro_1</dir>
@@ -354,31 +328,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pro_1" type="Python.DjangoServer" factoryName="Django server">
-      <module name="pro_1" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <option name="port" value="8000" />
-      <option name="host" value="" />
-      <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="" />
-      <option name="runTestServer" value="false" />
-      <option name="runNoReload" value="false" />
-      <option name="useCustomRunCommand" value="false" />
-      <option name="customRunCommand" value="" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Django server.pro_1" />
       <item itemvalue="Python.api_script" />
       <item itemvalue="Python.database_connect" />
       <item itemvalue="Python.account" />
@@ -407,8 +357,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19515885" />
       <window_info id="Structure" order="1" weight="0.25" />
@@ -425,7 +374,7 @@
       <window_info anchor="bottom" id="Python Console" order="9" weight="0.32935154" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="12" />
+      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -645,13 +594,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app_1/Faculty_View.py">
+    <entry file="file://$PROJECT_DIR$/api_tools/api_tools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="163" column="58" lean-forward="true" selection-start-line="163" selection-start-column="58" selection-end-line="163" selection-end-column="58" />
+        <state relative-caret-position="1402">
+          <caret line="117" column="12" selection-start-line="117" selection-start-column="12" selection-end-line="117" selection-end-column="12" />
           <folding>
-            <element signature="e#510#6662#0" />
-            <element signature="e#6703#7691#0" />
+            <element signature="e#24#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -659,7 +607,7 @@
     <entry file="file://$PROJECT_DIR$/signals/handlers1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
-          <caret line="402" column="15" lean-forward="true" selection-start-line="402" selection-start-column="15" selection-end-line="402" selection-end-column="15" />
+          <caret line="403" column="15" selection-start-line="403" selection-start-column="15" selection-end-line="403" selection-end-column="15" />
           <folding>
             <element signature="e#522#1623#0" />
             <element signature="e#1739#3280#0" />
@@ -672,13 +620,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api_tools/api_tools.py">
+    <entry file="file://$PROJECT_DIR$/app_1/Faculty_View.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="110" column="12" lean-forward="true" selection-start-line="110" selection-start-column="12" selection-end-line="110" selection-end-column="12" />
+        <state relative-caret-position="200">
+          <caret line="163" column="58" selection-start-line="163" selection-start-column="58" selection-end-line="163" selection-end-column="58" />
           <folding>
-            <element signature="e#24#63#0" expanded="true" />
-            <marker date="1534657856876" expanded="true" signature="4142:4147" ph="..." />
+            <element signature="e#510#6662#0" />
+            <element signature="e#6703#7691#0" />
           </folding>
         </state>
       </provider>
