@@ -43,7 +43,7 @@ class SectionView(APIView):
             cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
                                                  xy_coordinate=xy_coordinate, road_id=road_id, channel=channel,
                                                  call_sign=call_sign, remark1=remark_1, remark2=remark_2,
-                                                 remark3=remark_3, district_id=district_id)
+                                                 remark3=remark_3, district_id=Road.objects.get(id=road_id).district_id)
 
             try:
                 with transaction.atomic():
@@ -83,12 +83,17 @@ class SectionView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         road_name = ''
         if road_id:
-            road_name = Road.objects.get(id = road_id).name
-            cur_section = Section.objects.filter(enabled=1, road_id=road_id).order_by('-id')
+            road_name = Road.objects.get(id=road_id).name
+            section_ids = Road.objects.get(id=road_id).sectionids
+            cur_section = []
+            if section_ids:
+                id_list = section_ids.split('-')
+                for id in id_list:
+                    cur_section.append(Section.objects.get(id=int(id)))
         else:
             cur_section = Section.objects.filter(enabled=1).order_by('-id')
-        if district_id:
-            cur_section = cur_section.filter(district_id=district_id).order_by('-id')
+            if district_id:
+                cur_section = cur_section.filter(district_id=district_id)
         paginator = Paginator(cur_section, cur_per_page)
         page_count = paginator.num_pages
 
@@ -213,7 +218,7 @@ class SectionFacultyView(APIView):
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
                                                  level=2, role=faculty_type, main_id=section_id,
-                                                 district_id=district_id, channel=cur_section.channel,
+                                                 district_id=cur_section.district_id, channel=cur_section.channel,
                                                  call_sign=cur_section.call_sign)
             try:
                 with transaction.atomic():
@@ -515,3 +520,50 @@ class CopySectionView(APIView):
         for item in arm_poli:
             new_section.exec_chief_armed_poli.add(item)
         return Response(response_data, status.HTTP_200_OK)
+
+
+# ranking sections in a particular road
+class SectionRank(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            road_id = int(request.POST.get('roadId'))
+            section_id = int(request.POST.get('sectionId'))
+            # rank=1: upgrade; rank=2: downgrade
+            rank = int(request.POST.get('rank'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_road = Road.objects.get(id=road_id)
+        sections_ids = cur_road.sectionids
+        if not sections_ids:
+            return generate_error_response(error_constants.ERR_NO_SECTION_IN_ROAD, status.HTTP_400_BAD_REQUEST)
+        section_id_list = sections_ids.split('-')
+        if len(section_id_list) == 1:
+            return generate_error_response(error_constants.ERR_ONE_SECTION_IN_ROAD, status.HTTP_400_BAD_REQUEST)
+        index = section_id_list.index(str(section_id))
+        if index == 0 and rank == 1:
+            return generate_error_response(error_constants.ERR_SECTION_FIRST, status.HTTP_400_BAD_REQUEST)
+        if index == len(section_id_list)-1 and rank == 2:
+            return generate_error_response(error_constants.ERR_SECTION_LAST, status.HTTP_400_BAD_REQUEST)
+        if rank == 1:
+            section_id_list[index-1], section_id_list[index] = section_id_list[index], section_id_list[index-1]
+        if rank == 2:
+            section_id_list[index], section_id_list[index+1] = section_id_list[index+1], section_id_list[index]
+
+        cur_road.sectionids = '-'.join(section_id_list)
+        cur_road.save()
+        return Response(response_data, status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+

@@ -37,8 +37,9 @@ class StationView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if section_id:
             cur_station = Station.objects.create(name=name, location=location, section_id=section_id,
-                                                 district_id=district_id, channel=channel, call_sign=call_sign,
-                                                 remark1=remark_1,remark2=remark_2, remark3=remark_3)
+                                                 district_id=Section.objects.get(id=section_id).district_id,
+                                                 channel=channel, call_sign=call_sign,
+                                                 remark1=remark_1, remark2=remark_2, remark3=remark_3)
 
             try:
                 with transaction.atomic():
@@ -89,8 +90,8 @@ class StationView(APIView):
             cur_station = Station.objects.filter(enabled=1, section_id=section_id).order_by('-id')
         else:
             cur_station = Station.objects.filter(enabled=1).order_by('-id')
-        if district_id:
-            cur_station = cur_station.filter(district_id=district_id).order_by('-id')
+            if district_id:
+                cur_station = cur_station.filter(district_id=district_id).order_by('-id')
         paginator = Paginator(cur_station, cur_per_page)
         page_count = paginator.num_pages
 
@@ -199,10 +200,12 @@ class StationFacultyView(APIView):
             cur_faculty = cur_faculty.first()
         else:
             if faculty_type == 3:
-                faculty_type = 2
+                role = 2
+            else:
+                role = 1
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
-                                                 level=3, role=faculty_type, main_id=station_id,
-                                                 district_id=district_id, channel=cur_station.channel,
+                                                 level=3, role=role, main_id=station_id,
+                                                 district_id=cur_station.district_id, channel=cur_station.channel,
                                                  call_sign=cur_station.call_sign)
             try:
                 with transaction.atomic():

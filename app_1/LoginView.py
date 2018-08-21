@@ -58,7 +58,6 @@ class CreateDistrictView(APIView):
 class LoginView(APIView):
     # 登陆
     def post(self, request):
-        print(request.POST)
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
                          'data': {

@@ -72,11 +72,16 @@ class RoadView(APIView):
         if service_line_id:
             cur_service_line = ServiceLine.objects.get(id=service_line_id)
             service_line_name = cur_service_line.name
-            cur_road = cur_service_line.road.filter(enabled=True).order_by('-id')
+            road_ids = cur_service_line.roadids
+            cur_road = []
+            if road_ids:
+                id_list = road_ids.split('-')
+                for id in id_list:
+                    cur_road.append(Road.objects.get(id=int(id)))
         else:
             cur_road = Road.objects.filter(enabled=True).order_by('-id')
-        if district_id:
-            cur_road = cur_road.filter(district_id=district_id).order_by('-id')
+            if district_id:
+                cur_road = cur_road.filter(district_id=district_id).order_by('-id')
         paginator = Paginator(cur_road, cur_per_page)
         page_count = paginator.num_pages
 
@@ -195,7 +200,7 @@ class RoadFacultyView(APIView):
         else:
             cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
                                                  level=1, role=faculty_type, main_id=road_id,
-                                                 district_id=district_id, channel=cur_road.channel,
+                                                 district_id=cur_road.district_id, channel=cur_road.channel,
                                                  call_sign=cur_road.call_sign)
             try:
                 with transaction.atomic():
@@ -502,3 +507,43 @@ class CopyRoadView(APIView):
         for item in arm_poli:
             new_road.exec_chief_armed_poli.add(item)
         return Response(response_data, status.HTTP_200_OK)
+
+
+# ranking roads in a particular service_line
+class RoadRank(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.POST.get('serviceLineId'))
+            road_id = int(request.POST.get('roadId'))
+            # rank=1: upgrade; rank=2: downgrade
+            rank = int(request.POST.get('rank'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        road_ids = cur_service_line.roadids
+        if not road_ids:
+            return generate_error_response(error_constants.RR_NO_ROAD_IN_SERVICELINE, status.HTTP_400_BAD_REQUEST)
+        road_id_list = road_ids.split('-')
+        if len(road_id_list) == 1:
+            return generate_error_response(error_constants.ERR_ONE_ROAD_IN_SERVICELINE, status.HTTP_400_BAD_REQUEST)
+        index = road_id_list.index(str(road_id))
+        if index == 0 and rank == 1:
+            return generate_error_response(error_constants.ERR_ROAD_FIRST, status.HTTP_400_BAD_REQUEST)
+        if index == len(road_id_list)-1 and rank == 2:
+            print('already last')
+            return generate_error_response(error_constants.ERR_ROAD_LAST, status.HTTP_400_BAD_REQUEST)
+        if rank == 1:
+            road_id_list[index-1], road_id_list[index] = road_id_list[index], road_id_list[index-1]
+        if rank == 2:
+            road_id_list[index], road_id_list[index+1] = road_id_list[index+1], road_id_list[index]
+
+        cur_service_line.roadids = '-'.join(road_id_list)
+        cur_service_line.save()
+        return Response(response_data, status.HTTP_200_OK)
+

@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from app_1.models import Road, Section, Station, Faculty, ServiceLine
 from t.models import guard_line, guard_road
 from constants.constants import increment
+from constants.constants import pattern
 
 
 def generate_error_response(error_message, error_type):
@@ -53,11 +54,7 @@ def update_service_line_road_ids(service_line_id, road_id, bollen):
             cur_service_line.roadids = str(road_id)
         else:
             cur_service_line.roadids = cur_service_line.roadids + '-' + str(road_id)
-        print('----------------')
-        print('uid=', road_id+increment)
-        print('seruid', service_line_id+increment)
         print(guard_road.objects.get(id=road_id+increment).road_name)
-        print('-------end---------')
         guard_road.objects.filter(uid=road_id+increment).update(lineid=service_line_id+increment)
     else:
         print('serviceline remove roadid')
@@ -78,7 +75,6 @@ def generate_service_line_points(service_line_id):
     else:
         road_id_list = road_ids.split('-')
         point_list = []
-        print(point_list)
         for road_id in road_id_list:
             cur_road = Road.objects.get(id=int(road_id))
             section_ids = cur_road.sectionids
@@ -87,7 +83,8 @@ def generate_service_line_points(service_line_id):
             section_id_list = section_ids.split('-')
             for section_id in section_id_list:
                 cur_section = Section.objects.get(id=int(section_id))
-                point_list.append(cur_section.xy_coordinate)
+                if pattern.search(cur_section.xy_coordinate):
+                    point_list.append(cur_section.xy_coordinate)
         begin_point, end_point, points_str = handle(point_list)
         guard_line.objects.filter(uid=service_line_id+increment).\
             update(points=points_str, begin_point=begin_point, end_point=end_point)
@@ -100,7 +97,7 @@ def handle(point_list):
     begin_point = ''
     end_point = ''
     for item in point_list1:
-        if not item:
+        if not pattern.search(item):
             point_list1.remove(item)
     if len(point_list1):
         begin_point = point_list1[0] + ',' + point_list1[1]

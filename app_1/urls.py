@@ -96,4 +96,10 @@ urlpatterns = [
     # 复制road
     url(r'^copy/road?$', RoadView.CopyRoadView.as_view(), name='copy_road'),
 
+    # ranking sections in particular road
+    url(r'^section/rank?$', SectionView.SectionRank.as_view(), name='section_rank'),
+
+    # ranking roads in particular serviceline
+    url(r'^road/rank?$', RoadView.RoadRank.as_view(), name='road_rank'),
+
 ]
