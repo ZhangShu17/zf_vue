@@ -36,10 +36,11 @@ class Faculty(models.Model):
     level = models.IntegerField(default=0, null=True)
     role = models.IntegerField(default=0, null=True)
     main_id = models.IntegerField(default=0, null=True)
+    main_name = models.CharField(default='', null=True, max_length=100)
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'mobile', 'duty'),)
+        unique_together = (('name', 'mobile', 'duty','level','main_id','role'),)
 
 
 # 勤务路线

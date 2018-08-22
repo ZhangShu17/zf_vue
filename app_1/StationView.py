@@ -376,14 +376,15 @@ class FacultyNotInStation(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_station = Station.objects.get(id=station_id)
+        cur_station_name = cur_station.name
         district_id = cur_station.district_id
         chief_list = cur_station.chief.all().values_list('id', flat=True)
         trans_list = cur_station.exec_chief_trans.all().values_list('id', flat=True)
         cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                                level=3, role=1, main_id=station_id).\
+                                                level=3, role=1, main_name=cur_station_name).\
             exclude(id__in=chief_list).order_by('id')
         cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                                level=3, role=2, main_id=station_id).\
+                                                level=3, role=2, main_name=cur_station_name).\
             exclude(id__in=trans_list).order_by('id')
         response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
         response_data['data']['execChiefTransList'] = FacultySerializer(cur_trans_list, many=True).data

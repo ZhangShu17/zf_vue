@@ -421,22 +421,23 @@ class FacultyNotInSection(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_section = Section.objects.get(id=section_id)
+        cur_section_name = cur_section.name
         district_id = cur_section.district_id
         chief_list = cur_section.chief.all().values_list('id', flat=True)
         bureau_list = cur_section.exec_chief_sub_bureau.all().values_list('id', flat=True)
         trans_list = cur_section.exec_chief_trans.all().values_list('id', flat=True)
         poli_list = cur_section.exec_chief_armed_poli.all().values_list('id', flat=True)
         cur_chief_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                                level=2, role=1, main_id=section_id).\
+                                                level=2, role=1, main_name=cur_section_name).\
             exclude(id__in=chief_list).order_by('id')
         cur_bureau_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                                 level=2, role=2, main_id=section_id).\
+                                                 level=2, role=2, main_name=cur_section_name).\
             exclude(id__in=bureau_list).order_by('id')
         cur_trans_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                                level=2, role=3, main_id=section_id).\
+                                                level=2, role=3, main_name=cur_section_name).\
             exclude(id__in=trans_list).order_by('id')
         cur_poli_list = Faculty.objects.filter(enabled=True, district_id=district_id,
-                                               level=2, role=4, main_id=section_id).\
+                                               level=2, role=4, main_name=cur_section_name).\
             exclude(id__in=poli_list).order_by('id')
         response_data['data']['chiefList'] = FacultySerializer(cur_chief_list, many=True).data
         response_data['data']['execChiefSubBureauList'] = FacultySerializer(cur_bureau_list, many=True).data

@@ -67,6 +67,7 @@ def update_service_line_road_ids(service_line_id, road_id, bollen):
 
 
 def generate_service_line_points(service_line_id):
+    print 'generate_service_line_points'
     cur_service_line = ServiceLine.objects.get(id=service_line_id)
     road_ids = cur_service_line.roadids
     if not road_ids:
@@ -126,52 +127,65 @@ def update_faculty_channel_call_sign(level, element_id):
     if level == 1:
         cur_road = Road.objects.get(id=element_id)
         channel = cur_road.channel
+        main_name = cur_road.name
         call_sign = cur_road.call_sign
         for item in cur_road.chief.all():
             item.channel = channel
+            item.main_name = main_name
             item.call_sign = call_sign
             item.save()
         for item in cur_road.exec_chief_sub_bureau.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_road.exec_chief_trans.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_road.exec_chief_armed_poli.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
     if level == 2:
         cur_section = Section.objects.get(id=element_id)
+        main_name = cur_section.name
         channel = cur_section.channel
         call_sign = cur_section.call_sign
         for item in cur_section.chief.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_section.exec_chief_sub_bureau.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_section.exec_chief_trans.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_section.exec_chief_armed_poli.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
     if level == 3:
         cur_station = Station.objects.get(id=element_id)
+        main_name = cur_station.name
         channel = cur_station.channel
         call_sign = cur_station.call_sign
         for item in cur_station.chief.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()
         for item in cur_station.exec_chief_trans.all():
+            item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
             item.save()

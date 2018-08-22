@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import transaction
-from models import Faculty
+from models import Faculty, Road, Section, Station
 from constants import error_constants
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -35,13 +35,21 @@ class FacultyView(APIView):
 
         if not name or not mobile:
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_faculty = Faculty.objects.filter(name=name, mobile=mobile)
-        if cur_faculty.exists():
-            cur_faculty.update(enabled=True)
+        # cur_faculty = Faculty.objects.filter(name=name, mobile=mobile)
+        # if cur_faculty.exists():
+        #     cur_faculty.update(enabled=True)
         else:
+            main_name = ''
+            if level and road_section_station:
+                if level == 1:
+                    main_name = Road.objects.get(id=road_section_station).name
+                if level == 2:
+                    main_name = Section.objects.get(id=road_section_station).name
+                if level == 3:
+                    main_name = Station.objects.get(id=road_section_station).name
             cur_faculty = Faculty.objects.create(district_id=district_id, name=name, mobile=mobile, duty=duty,
                                                  channel=channel, call_sign=call_sign, level=level, role=role,
-                                                 main_id=road_section_station)
+                                                 main_id=road_section_station, main_name = main_name)
             try:
                 with transaction.atomic():
                     cur_faculty.save()
