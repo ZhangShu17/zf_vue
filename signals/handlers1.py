@@ -7,12 +7,15 @@ from django.dispatch import receiver
 from constants.constants import increment
 from api_tools.api_tools import is_already_in_use
 from api_tools.api_tools import generate_service_line_points
+from api_tools.api_tools import generate_error_response
+from constants import error_constants
+from rest_framework import status
 
 
 @receiver(signals.post_save, sender=Faculty)
 def create_update_faculty(sender, instance, created, **kwargs):
     if created:
-        print('handlers1_created')
+        print('faculty_created')
         id = instance.id
         name = instance.name
         mobile = instance.mobile
@@ -24,7 +27,7 @@ def create_update_faculty(sender, instance, created, **kwargs):
                                                      call=call_sign, username=name)
         cur_guard_admin.save()
     else:
-        print('handlers1_update')
+        print('faculty_update')
         id = instance.id
         name = instance.name
         mobile = instance.mobile
@@ -402,3 +405,27 @@ def create_update_service_line(sender, instance, created, **kwargs):
         cur_guard_line.update(name=name, begins=startPlace, ends=endPlace, enabled=enabled)
     print('i have compolished update')
     generate_service_line_points(instance.id)
+
+
+# @receiver(signals.pre_save, sender=Faculty)
+# def check_faculty_count_particular_role(sender, instance, using, update_fields, raw, **kwargs):
+#     # 表示新创建的人员
+#     level = instance.level
+#     role = instance.role
+#     main_id = instance.main_id
+#     if not instance.id:
+#         print('no instance.id')
+#         count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
+#     # 表示更新的
+#     else:
+#         print('has instance.id')
+#         faculty_id = instance.id
+#         count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
+#             exclude(id=faculty_id).count()
+#     print('level=', level)
+#     print('role=', role)
+#     print('main_id=', main_id)
+#     print('count=', count)
+#     if count >= 4:
+#         print('exceed 4')
+#         return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)

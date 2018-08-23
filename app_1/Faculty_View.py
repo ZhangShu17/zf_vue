@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Faculty, Road, Section, Station
 from constants import error_constants
-from api_tools.api_tools import generate_error_response
+from api_tools.api_tools import generate_error_response, check_faculty_count_particular_role
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import FacultySerializer
 from api_tools.token import SystemAuthentication
@@ -15,7 +15,7 @@ from api_tools.token import SystemAuthentication
 class FacultyView(APIView):
     authentication_classes = (SystemAuthentication,)
 
-    def post(self,request):
+    def post(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
@@ -34,7 +34,7 @@ class FacultyView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
 
         if not name or not mobile:
-            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+            return generate_error_response(error_constants.ERR_NO_NAME_MOBILE, status.HTTP_400_BAD_REQUEST)
         # cur_faculty = Faculty.objects.filter(name=name, mobile=mobile)
         # if cur_faculty.exists():
         #     cur_faculty.update(enabled=True)
@@ -47,17 +47,22 @@ class FacultyView(APIView):
                     main_name = Section.objects.get(id=road_section_station).name
                 if level == 3:
                     main_name = Station.objects.get(id=road_section_station).name
-            cur_faculty = Faculty.objects.create(district_id=district_id, name=name, mobile=mobile, duty=duty,
+            cur_faculty = Faculty(district_id=district_id, name=name, mobile=mobile, duty=duty,
                                                  channel=channel, call_sign=call_sign, level=level, role=role,
-                                                 main_id=road_section_station, main_name = main_name)
-            try:
-                with transaction.atomic():
-                    cur_faculty.save()
-            except Exception as ex:
-                print 'function name: ', __name__
-                print Exception, ":", ex
-                return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
-                                               status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                                 main_id=road_section_station, main_name=main_name)
+            # 岗位人数限制
+            count = check_faculty_count_particular_role(cur_faculty)
+            if count >= 4:
+                return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
+            else:
+                try:
+                    with transaction.atomic():
+                        cur_faculty.save()
+                except Exception as ex:
+                    print 'function name: ', __name__
+                    print Exception, ":", ex
+                    return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                                   status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(response_data, status=status.HTTP_200_OK)
 
     def put(self, request):
@@ -87,7 +92,13 @@ class FacultyView(APIView):
         cur_faculty.level = level
         cur_faculty.role = role
         cur_faculty.main_id = road_section_station
-        cur_faculty.save()
+
+        # 岗位人数限制
+        count = check_faculty_count_particular_role(cur_faculty)
+        if count >= 4:
+            return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
+        else:
+            cur_faculty.save()
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):

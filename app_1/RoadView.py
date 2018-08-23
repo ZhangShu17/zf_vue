@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Road, Faculty, ServiceLine
 from constants import error_constants
-from api_tools.api_tools import generate_error_response, update_faculty_channel_call_sign
+from api_tools.api_tools import generate_error_response, update_faculty_channel_call_sign, \
+    check_faculty_count_particular_role
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer, FacultySerializer
 from django.db.models import Q
@@ -61,6 +62,7 @@ class RoadView(APIView):
         try:
             service_line_id = int(request.GET.get('serviceLineId', 0))
             district_id = int(request.GET.get('districtId', 0))
+            filter_type = int(request.GET.get('filterType', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
         except Exception as ex:
@@ -76,12 +78,24 @@ class RoadView(APIView):
             cur_road = []
             if road_ids:
                 id_list = road_ids.split('-')
-                for id in id_list:
-                    cur_road.append(Road.objects.get(id=int(id)))
+                if district_id:
+                    for id in id_list:
+                        cur_road = Road.objects.get(id=int(id))
+                        if cur_road.district_id == district_id:
+                            cur_road.append(cur_road)
+                else:
+                    for id in id_list:
+                        cur_road = Road.objects.get(id=int(id))
+                        cur_road.append(cur_road)
+
         else:
             cur_road = Road.objects.filter(enabled=True).order_by('-id')
             if district_id:
                 cur_road = cur_road.filter(district_id=district_id).order_by('-id')
+            if filter_type == 1:
+                cur_road = cur_road.filter(Road_Service__isnull=False)
+            if filter_type == 2:
+                cur_road = cur_road.exclude(Road_Service__isnull=False)
         paginator = Paginator(cur_road, cur_per_page)
         page_count = paginator.num_pages
 
@@ -198,18 +212,23 @@ class RoadFacultyView(APIView):
             cur_faculty.update(enabled=True)
             cur_faculty = cur_faculty.first()
         else:
-            cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
+            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty,
                                                  level=1, role=faculty_type, main_id=road_id,
                                                  district_id=cur_road.district_id, channel=cur_road.channel,
                                                  call_sign=cur_road.call_sign)
-            try:
-                with transaction.atomic():
-                    cur_faculty.save()
-            except Exception as ex:
-                print 'function name: ', __name__
-                print Exception, ":", ex
-                return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
-                                               status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # 岗位人数限制
+            count = check_faculty_count_particular_role(cur_faculty)
+            if count >= 4:
+                return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
+            else:
+                try:
+                    with transaction.atomic():
+                        cur_faculty.save()
+                except Exception as ex:
+                    print 'function name: ', __name__
+                    print Exception, ":", ex
+                    return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                                   status.HTTP_500_INTERNAL_SERVER_ERROR)
         if faculty_type == 1:
             cur_road.chief.add(cur_faculty)
         if faculty_type == 2:
@@ -529,7 +548,7 @@ class RoadRank(APIView):
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         road_ids = cur_service_line.roadids
         if not road_ids:
-            return generate_error_response(error_constants.RR_NO_ROAD_IN_SERVICELINE, status.HTTP_400_BAD_REQUEST)
+            return generate_error_response(error_constants.ERR_NO_ROAD_IN_SERVICELINE, status.HTTP_400_BAD_REQUEST)
         road_id_list = road_ids.split('-')
         if len(road_id_list) == 1:
             return generate_error_response(error_constants.ERR_ONE_ROAD_IN_SERVICELINE, status.HTTP_400_BAD_REQUEST)

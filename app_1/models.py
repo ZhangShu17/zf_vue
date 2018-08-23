@@ -40,7 +40,7 @@ class Faculty(models.Model):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('name', 'mobile', 'duty','level','main_id','role'),)
+        unique_together = (('name', 'mobile', 'duty', 'level', 'main_id', 'role'),)
 
 
 # 勤务路线

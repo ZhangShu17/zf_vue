@@ -68,9 +68,9 @@ class ServiceLineView(APIView):
             cur_service_line = ServiceLine.objects.filter(id=service_line_id, enabled=True)
         elif district_id:
             cur_district = District.objects.get(id=district_id)
-            cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('-time')
+            cur_service_line = cur_district.District_Service.filter(enabled=True).order_by('-time').order_by('-id')
         else:
-            cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('-time')
+            cur_service_line = ServiceLine.objects.filter(enabled=True).order_by('-time').order_by('-id')
 
         paginator = Paginator(cur_service_line, cur_per_page)
         page_count = paginator.num_pages
@@ -83,7 +83,7 @@ class ServiceLineView(APIView):
         except EmptyPage:
             page = paginator.num_pages
             service_lists = paginator.page(page)
-        serializer = ServiceLineSerializer(cur_service_line, many=True,
+        serializer = ServiceLineSerializer(service_lists, many=True,
                                                       context={'district_id': district_id})
         response_data['data'] = {}
         response_data['data']['curPage'] = page

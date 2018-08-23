@@ -8,7 +8,8 @@ from models import Road, Faculty, Section
 from t.models import guard_road
 from constants import error_constants
 from django.db.models import Q
-from api_tools.api_tools import generate_error_response,update_faculty_channel_call_sign
+from api_tools.api_tools import generate_error_response,update_faculty_channel_call_sign, \
+    check_faculty_count_particular_role
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
@@ -77,6 +78,7 @@ class SectionView(APIView):
             district_id = int(request.GET.get('districtId', 0))
             cur_per_page = int(request.GET.get('perPage', 20))
             page = int(request.GET.get('page', 1))
+            filter_type = int(request.GET.get('filterType', 0))
         except Exception as ex:
             print 'function name: ', __name__
             print Exception, ":", ex
@@ -94,6 +96,10 @@ class SectionView(APIView):
             cur_section = Section.objects.filter(enabled=1).order_by('-id')
             if district_id:
                 cur_section = cur_section.filter(district_id=district_id)
+            if filter_type == 1:
+                cur_section = cur_section.filter(road_id__isnull=False)
+            if filter_type == 2:
+                cur_section = cur_section.exclude(road_id__isnull=False)
         paginator = Paginator(cur_section, cur_per_page)
         page_count = paginator.num_pages
 
@@ -216,18 +222,23 @@ class SectionFacultyView(APIView):
             cur_faculty.update(enabled=True)
             cur_faculty = cur_faculty.first()
         else:
-            cur_faculty = Faculty.objects.create(name=name, mobile=mobile, duty=duty,
+            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty,
                                                  level=2, role=faculty_type, main_id=section_id,
                                                  district_id=cur_section.district_id, channel=cur_section.channel,
                                                  call_sign=cur_section.call_sign)
-            try:
-                with transaction.atomic():
-                    cur_faculty.save()
-            except Exception as ex:
-                print 'function name: ', __name__
-                print Exception, ":", ex
-                return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
-                                               status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # 岗位人数限制
+            count = check_faculty_count_particular_role(cur_faculty)
+            if count >= 4:
+                return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
+            else:
+                try:
+                    with transaction.atomic():
+                        cur_faculty.save()
+                except Exception as ex:
+                    print 'function name: ', __name__
+                    print Exception, ":", ex
+                    return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                                   status.HTTP_500_INTERNAL_SERVER_ERROR)
         if faculty_type == 1:
             cur_section.chief.add(cur_faculty)
         if faculty_type == 2:

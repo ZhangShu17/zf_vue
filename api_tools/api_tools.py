@@ -3,11 +3,14 @@ from __future__ import unicode_literals
 from rest_framework.response import Response
 from app_1.models import Road, Section, Station, Faculty, ServiceLine
 from t.models import guard_line, guard_road
+from constants import error_constants
 from constants.constants import increment
 from constants.constants import pattern
+from rest_framework import status
 
 
 def generate_error_response(error_message, error_type):
+    print('shshhshshshshsh')
     return Response({'retCode': error_message[0],
                      'retMsg': error_message[1]}, error_type)
 
@@ -189,3 +192,20 @@ def update_faculty_channel_call_sign(level, element_id):
             item.channel = channel
             item.call_sign = call_sign
             item.save()
+
+
+def check_faculty_count_particular_role(instance):
+    # 表示新创建的人员
+    level = instance.level
+    role = instance.role
+    main_id = instance.main_id
+    if not instance.id:
+        count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
+    # 表示更新的
+    else:
+        faculty_id = instance.id
+        count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
+            exclude(id=faculty_id).count()
+    return count
+
+

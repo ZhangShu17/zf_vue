@@ -71,10 +71,10 @@ class LoginView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_account = Account.objects.filter(name=user_name).first()
+
+        pass_word_hash = hashlib.md5(password).hexdigest()
+        cur_account = Account.objects.filter(name=user_name, password=pass_word_hash).first()
         if not cur_account:
-            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        if hashlib.md5(password).hexdigest() != cur_account.password:
             return generate_error_response(error_constants.ERR_INVALID_ACCOUNT, status.HTTP_400_BAD_REQUEST)
         token = create_token(user_name)
         response_data['data']['userName'] = user_name
