@@ -80,13 +80,13 @@ class RoadView(APIView):
                 id_list = road_ids.split('-')
                 if district_id:
                     for id in id_list:
-                        cur_road = Road.objects.get(id=int(id))
-                        if cur_road.district_id == district_id:
-                            cur_road.append(cur_road)
+                        cur_road_query = Road.objects.get(id=int(id))
+                        if cur_road_query.district_id == district_id:
+                            cur_road.append(cur_road_query)
                 else:
                     for id in id_list:
-                        cur_road = Road.objects.get(id=int(id))
-                        cur_road.append(cur_road)
+                        cur_road_query = Road.objects.get(id=int(id))
+                        cur_road.append(cur_road_query)
 
         else:
             cur_road = Road.objects.filter(enabled=True).order_by('-id')

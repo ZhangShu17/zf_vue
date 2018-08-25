@@ -199,13 +199,28 @@ def check_faculty_count_particular_role(instance):
     level = instance.level
     role = instance.role
     main_id = instance.main_id
-    if not instance.id:
-        count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
-    # 表示更新的
+    # if not instance.id:
+    #     count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
+    # # 表示更新的
+    # else:
+    #     faculty_id = instance.id
+    #     count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
+    #         exclude(id=faculty_id).count()
+    # return count
+    district_id = instance.district_id
+    # 天安门地区人员放开限制
+    if int(district_id) == 1:
+        count = 0
     else:
-        faculty_id = instance.id
-        count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
-            exclude(id=faculty_id).count()
+        # 表示角色是确定了的
+        if level and role and main_id:
+            # 表示创建
+            if not instance.id:
+                count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
+            else:  # 表示更新
+                faculty_id = instance.id
+                count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
+                    exclude(id=faculty_id).count()
+        else:
+            count = 0
     return count
-
-

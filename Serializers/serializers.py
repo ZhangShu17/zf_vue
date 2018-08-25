@@ -18,7 +18,7 @@ class FacultySerializer(serializers.ModelSerializer):
     level_name = serializers.SerializerMethodField()
     role_name = serializers.SerializerMethodField()
     main_name = serializers.SerializerMethodField()
-
+    district_name = serializers.SerializerMethodField()
     class Meta:
         model = Faculty
         fields = (
@@ -34,7 +34,8 @@ class FacultySerializer(serializers.ModelSerializer):
             'role_name',
             'main_id',
             'main_name',
-            'district_id'
+            'district_id',
+            'district_name',
         )
 
     def get_level_name(self, obj):
@@ -99,11 +100,18 @@ class FacultySerializer(serializers.ModelSerializer):
         else:
             return ''
 
+    def get_district_name(self, obj):
+        if obj.district:
+            return obj.district.name
+        else:
+            return ''
 
 
 class RoadSerializer(serializers.ModelSerializer):
     section_number = serializers.SerializerMethodField()
     station_number = serializers.SerializerMethodField()
+    district_name = serializers.SerializerMethodField()
+    related_service_line = serializers.SerializerMethodField()
 
     class Meta:
         model = Road
@@ -119,7 +127,9 @@ class RoadSerializer(serializers.ModelSerializer):
             'call_sign',
             'remark1',
             'remark2',
-            'remark3'
+            'remark3',
+            'district_name',
+            'related_service_line',
         )
 
     def get_section_number(self, obj):
@@ -133,6 +143,16 @@ class RoadSerializer(serializers.ModelSerializer):
             cur_station = item.Section_Station.filter(enabled=True).all()
             count = count + cur_station.count()
         return count
+
+    def get_district_name(self, obj):
+        if obj.district:
+            return obj.district.name
+        else:
+            return ''
+
+    def get_related_service_line(self, obj):
+        service_list = obj.Road_Service.values_list('name', flat=True)
+        return '-'.join(service_list)
 
 
 class SingleRoadSerializer(serializers.ModelSerializer):
@@ -157,6 +177,8 @@ class SingleRoadSerializer(serializers.ModelSerializer):
 
 class SectionSerializer(serializers.ModelSerializer):
     station_number = serializers.SerializerMethodField()
+    district_name = serializers.SerializerMethodField()
+    related_service_line = serializers.SerializerMethodField()
 
     class Meta:
         model = Section
@@ -171,12 +193,27 @@ class SectionSerializer(serializers.ModelSerializer):
             'station_number',
             'remark1',
             'remark2',
-            'remark3'
+            'remark3',
+            'district_name',
+            'related_service_line',
         )
 
     def get_station_number(self, obj):
         cur_station = obj.Section_Station.filter(enabled=True).all()
         return cur_station.count()
+
+    def get_district_name(self, obj):
+        if obj.district:
+            return obj.district.name
+        else:
+            return ''
+
+    def get_related_service_line(self, obj):
+        if obj.road:
+            service_list = obj.road.Road_Service.values_list('name', flat=True)
+            return '-'.join(service_list)
+        else:
+            return ''
 
 
 class SingleSectionSerializer(serializers.ModelSerializer):
@@ -201,6 +238,9 @@ class SingleSectionSerializer(serializers.ModelSerializer):
 
 
 class StationSerializer(serializers.ModelSerializer):
+    district_name = serializers.SerializerMethodField()
+    related_service_line = serializers.SerializerMethodField()
+
     class Meta:
         model = Station
         fields = (
@@ -211,8 +251,26 @@ class StationSerializer(serializers.ModelSerializer):
             'call_sign',
             'remark1',
             'remark2',
-            'remark3'
+            'remark3',
+            'district_name',
+            'related_service_line',
         )
+
+    def get_district_name(self, obj):
+        if obj.district:
+            return obj.district.name
+        else:
+            return ''
+
+    def get_related_service_line(self, obj):
+        if obj.section:
+            if obj.section.road:
+                service_list = obj.section.road.Road_Service.values_list('name', flat=True)
+                return '-'.join(service_list)
+            else:
+                return ''
+        else:
+            return ''
 
 
 class SingleStationSerializer(serializers.ModelSerializer):

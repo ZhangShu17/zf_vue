@@ -10,8 +10,8 @@ account = [
     {'user_name': 'hd', 'pass_word': 'zf_1169'},
     {'user_name': 'ft', 'pass_word': 'zf_1679'},
     {'user_name': 'sjs', 'pass_word': 'zf_0904'},
-    {'user_name': 'jwj', 'pass_word': 'zf_9210'},
-    {'user_name': 'jwj', 'pass_word': 'zf_4093'},
+    {'user_name': 'xz', 'pass_word': 'zf_9210'},
+    {'user_name': 'sy', 'pass_word': 'zf_4093'},
     {'user_name': 'jwj', 'pass_word': 'zf_9649'},
 ]
 
