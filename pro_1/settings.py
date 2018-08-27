@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'pro_1.wsgi.application'
 #         'NAME': 'orcl',
 #         'USER': 'icp_zf',
 #         'PASSWORD': 'icp_zf',
-#         'HOST': '10.8.94.62',
+#         'HOST': '192.168.8.111',
 #         'PORT': '1521',
 #     }
 # }

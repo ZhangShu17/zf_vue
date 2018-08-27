@@ -384,6 +384,11 @@ def create_update_service_line(sender, instance, created, **kwargs):
             direction = '2'
             used = '0'
             line_id = str(ServiceLine.objects.filter(name=name, enabled=True).order_by('id').first().id+increment)
+            # reverse start and end
+            tmp = startPlace
+            startPlace = endPlace
+            endPlace = tmp
+
         else:
             direction = '1'
             used = '1'

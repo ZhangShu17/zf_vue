@@ -24,3 +24,16 @@ if not a:
 b = ' '
 if not b:
     print('space')
+
+newPoints = []
+tempPoint = []
+originPoints = [1,2,3,4,5,6,7,8,9,10,11,12]
+for i in range(0,len(originPoints),2):
+    newPoints.append(originPoints[i:i+2])
+print newPoints
+# change order
+for i in range(0,len(newPoints)/2,1):
+    tempPoint = newPoints[i]
+    newPoints[i] = newPoints[len(newPoints)-1-i]
+    newPoints[len(newPoints) - 1 - i] = tempPoint
+print newPoints

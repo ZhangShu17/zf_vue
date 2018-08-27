@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from rest_framework.response import Response
+
 from app_1.models import Road, Section, Station, Faculty, ServiceLine
-from t.models import guard_line, guard_road
-from constants import error_constants
 from constants.constants import increment
 from constants.constants import pattern
-from rest_framework import status
+from t.models import guard_line, guard_road
 
 
 def generate_error_response(error_message, error_type):
@@ -77,27 +77,43 @@ def generate_service_line_points(service_line_id):
         guard_line.objects.filter(uid=service_line_id + increment). \
             update(points='', begin_point='', end_point='')
     else:
+        # generate points by the direction
+        direction = guard_line.objects.filter(uid=service_line_id+increment).first().direction
+        print 'generate_service_line_points,direction:'+direction
         road_id_list = road_ids.split('-')
         point_list = []
         for road_id in road_id_list:
             cur_road = Road.objects.get(id=int(road_id))
             section_ids = cur_road.sectionids
             if not section_ids:
-                break
+                continue
             section_id_list = section_ids.split('-')
             for section_id in section_id_list:
                 cur_section = Section.objects.get(id=int(section_id))
                 if pattern.search(cur_section.xy_coordinate):
                     point_list.append(cur_section.xy_coordinate)
-        begin_point, end_point, points_str = handle(point_list)
+        begin_point, end_point, points_str = handle(point_list, direction)
         guard_line.objects.filter(uid=service_line_id+increment).\
             update(points=points_str, begin_point=begin_point, end_point=end_point)
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!Done!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
 
-def handle(point_list):
+def handle(point_list, direction):
+    print point_list
     points_str = ','.join(point_list)
     point_list1 = points_str.split(',')
+    print point_list1
+    new_points = []
+    if(direction == 2):
+        for i in range(0, len(point_list1), 2):
+            new_points.append(point_list1[i:i + 2])
+        for i in range(0, len(new_points) / 2, 1):
+            temp_points = new_points[i]
+            new_points[i] = new_points[len(new_points) - 1 - i]
+            new_points[len(new_points) - 1 - i] = temp_points
+        point_list1 = new_points
+        print 'reverse points:'
+        print point_list1
     begin_point = ''
     end_point = ''
     for item in point_list1:
