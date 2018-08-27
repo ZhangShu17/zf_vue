@@ -14,7 +14,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import SectionSerializer, SingleSectionSerializer, FacultySerializer
 from api_tools.token import SystemAuthentication
 from constants.constants import increment
-from api_tools.api_tools import update_road_section_ids
+from api_tools.api_tools import update_road_section_ids, copy_station_to_new_section
 
 
 class SectionView(APIView):
@@ -222,7 +222,7 @@ class SectionFacultyView(APIView):
             cur_faculty.update(enabled=True)
             cur_faculty = cur_faculty.first()
         else:
-            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty,
+            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty, main_name=cur_section.name,
                                                  level=2, role=faculty_type, main_id=section_id,
                                                  district_id=cur_section.district_id, channel=cur_section.channel,
                                                  call_sign=cur_section.call_sign)
@@ -331,9 +331,6 @@ class DeleteSectionFacultyView(APIView):
             cur_section.exec_chief_trans.remove(cur_faculty)
         if faculty_type == 4:
             cur_section.exec_chief_armed_poli.remove(cur_faculty)
-        cur_faculty.channel = ''
-        cur_faculty.call_sign = ''
-        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -506,8 +503,7 @@ class CopySectionView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_section = Section.objects.get(id=section_id)
         district_id = cur_section.district_id
-        road_id = cur_section.road_id
-        new_section = Section.objects.create(name=name, start_place=start_place, channel=channel, call_sign=call_sign,
+        new_section = Section(name=name, start_place=start_place, channel=channel, call_sign=call_sign,
                                              end_place=end_place, xy_coordinate=xy_coordinate,
                                              remark1=remark_1, remark2=remark_2, remark3=remark_3,
                                              district_id=district_id)
@@ -531,6 +527,8 @@ class CopySectionView(APIView):
             new_section.exec_chief_trans.add(item)
         for item in arm_poli:
             new_section.exec_chief_armed_poli.add(item)
+        # 复制段时将岗及人员全部复制关联
+        copy_station_to_new_section(new_section, cur_section)
         return Response(response_data, status.HTTP_200_OK)
 
 
