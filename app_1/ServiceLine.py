@@ -142,6 +142,52 @@ class ServiceLineView(APIView):
         return Response(response_data, status.HTTP_200_OK)
 
 
+class CopyServiceLine(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def post(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
+        try:
+            service_line_id = int(request.POST.get('serviceLineId'))
+            name = request.POST.get('name')
+            start_place = request.POST.get('startPlace')
+            end_place = request.POST.get('endPlace')
+            time = request.POST.get('time')
+            # 片区id组合起来德字符串，例如：'1-2-3-4-5'
+            district_str = request.POST.get('districtStr', '')
+            remark_1 = request.POST.get('remark1', '')
+            remark_2 = request.POST.get('remark2', '')
+            remark_3 = request.POST.get('remark3', '')
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        new_service_line = ServiceLine(name=name, startPlace=start_place, endPlace=end_place,
+                                       roadids=cur_service_line.roadids, time=time,
+                                       remark1=remark_1, remark2=remark_2, remark3=remark_3)
+        try:
+            with transaction.atomic():
+                new_service_line.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        district_list = []
+        if district_str:
+            district_list = district_str.split('-')
+        print(district_list)
+        for item in district_list:
+            cur_district = District.objects.get(id=int(item))
+            new_service_line.district.add(cur_district)
+        road_list = cur_service_line.road.all()
+        for item in road_list:
+            new_service_line.road.add(item)
+        return Response(response_data, status.HTTP_200_OK)
+
+
 class SubmitServiceLineView(APIView):
     authentication_classes = (SystemAuthentication,)
 

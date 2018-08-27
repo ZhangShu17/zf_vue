@@ -96,6 +96,9 @@ urlpatterns = [
     # 复制road
     url(r'^copy/road?$', RoadView.CopyRoadView.as_view(), name='copy_road'),
 
+    # 复制勤务serviceline
+    url(r'^copy/service_line?$', ServiceLine.CopyServiceLine.as_view(), name='copy_service_line'),
+
     # ranking sections in particular road
     url(r'^section/rank?$', SectionView.SectionRank.as_view(), name='section_rank'),
 
