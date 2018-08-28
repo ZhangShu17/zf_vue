@@ -20,7 +20,7 @@ def create_update_faculty(sender, instance, created, **kwargs):
         duty = instance.duty
         channel = instance.channel
         call_sign = instance.call_sign
-        cur_guard_admin = guard_admin(id=id+increment, uid=id+increment, duties=duty,
+        cur_guard_admin = guard_admin(uid=id+increment, duties=duty,
                                                      phone=mobile, radio_station=channel,
                                                      call=call_sign, username=name)
         cur_guard_admin.save()

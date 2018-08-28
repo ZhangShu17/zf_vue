@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from django.db import transaction
 from models import Faculty, Road, Section, Station
 from constants import error_constants
-from api_tools.api_tools import generate_error_response, check_faculty_count_particular_role
+from api_tools.api_tools import generate_error_response, \
+    check_faculty_count_particular_role, is_already_in_use
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import FacultySerializer
 from api_tools.token import SystemAuthentication
@@ -89,9 +90,10 @@ class FacultyView(APIView):
         cur_faculty.duty = duty
         cur_faculty.channel = channel
         cur_faculty.call_sign = call_sign
-        cur_faculty.level = level
-        cur_faculty.role = role
-        cur_faculty.main_id = road_section_station
+        if not is_already_in_use(faculty_id):
+            cur_faculty.level = level
+            cur_faculty.role = role
+            cur_faculty.main_id = road_section_station
 
         # 岗位人数限制
         count = check_faculty_count_particular_role(cur_faculty)
