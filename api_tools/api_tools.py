@@ -108,7 +108,8 @@ def update_service_submit(service_line_id, road_id):
     district_id_ser = cur_service.submit_district.split('-')
     district_id_road = cur_road.district_id
     road_id_list = cur_service.road.values_list('district_id', flat=True).distinct()
-    if district_id_road not in road_id_list:
+    # 如果该区没有提交，或者该区还有其他道路在勤务路线，则pass
+    if str(district_id_road) not in district_id_ser or district_id_road in road_id_list:
         pass
     else:
         district_id_ser.remove(str(district_id_road))

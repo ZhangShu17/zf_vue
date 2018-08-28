@@ -166,6 +166,7 @@ class CopyServiceLine(APIView):
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         new_service_line = ServiceLine(name=name, startPlace=start_place, endPlace=end_place,
                                        roadids=cur_service_line.roadids, time=time,
+                                       submit_district=cur_service_line.submit_district,
                                        remark1=remark_1, remark2=remark_2, remark3=remark_3)
         try:
             with transaction.atomic():
