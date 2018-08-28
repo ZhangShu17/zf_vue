@@ -7,7 +7,6 @@ from django.dispatch import receiver
 from constants.constants import increment
 from api_tools.api_tools import is_already_in_use
 from api_tools.api_tools import generate_service_line_points
-import random
 
 
 @receiver(signals.post_save, sender=Faculty)

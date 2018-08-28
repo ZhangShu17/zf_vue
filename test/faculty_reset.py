@@ -113,5 +113,3 @@ for road in Road.objects.all():
                                        phone=faculty.mobile, enabled=str(int(faculty.enabled)), dutyname=u'执行路长(武警)',
                                        radio_station=road.channel, call=road.call_sign, category=1,
                                        orderlist=4, mainid=road.id+increment)
-
-
