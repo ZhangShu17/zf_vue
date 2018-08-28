@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from rest_framework.response import Response
-
 from app_1.models import Road, Section, Station, Faculty, ServiceLine
+from t.models import guard_line, guard_road
+from constants import error_constants
 from constants.constants import increment
 from constants.constants import pattern
-from t.models import guard_line, guard_road
+from django.db import transaction
+from rest_framework import status
 
 
 def generate_error_response(error_message, error_type):
-    print('shshhshshshshsh')
     return Response({'retCode': error_message[0],
                      'retMsg': error_message[1]}, error_type)
 
@@ -34,13 +34,11 @@ def is_already_in_use(faculty_id):
 def update_road_section_ids(road_id, section_id, bollen):
     cur_road = Road.objects.get(id=road_id)
     if bollen:
-        print('road add sectionid')
         if not cur_road.sectionids:
             cur_road.sectionids = str(section_id)
         else:
             cur_road.sectionids = cur_road.sectionids + '-' + str(section_id)
     else:
-        print('remove roadid')
         sectionids = cur_road.sectionids.split('-')
         sectionids.remove(str(section_id))
         sectionids_str = '-'.join(sectionids)
@@ -51,16 +49,12 @@ def update_road_section_ids(road_id, section_id, bollen):
 def update_service_line_road_ids(service_line_id, road_id, bollen):
     cur_service_line = ServiceLine.objects.get(id=service_line_id)
     if bollen:
-        print('serviceline add road')
         if not cur_service_line.roadids:
-            print('yes')
             cur_service_line.roadids = str(road_id)
         else:
             cur_service_line.roadids = cur_service_line.roadids + '-' + str(road_id)
-        print(guard_road.objects.get(id=road_id+increment).road_name)
         guard_road.objects.filter(uid=road_id+increment).update(lineid=service_line_id+increment)
     else:
-        print('serviceline remove roadid')
         roadids = cur_service_line.roadids.split('-')
         roadids.remove(str(road_id))
         roadids_str = '-'.join(roadids)
@@ -70,7 +64,6 @@ def update_service_line_road_ids(service_line_id, road_id, bollen):
 
 
 def generate_service_line_points(service_line_id):
-    print 'generate_service_line_points'
     cur_service_line = ServiceLine.objects.get(id=service_line_id)
     road_ids = cur_service_line.roadids
     if not road_ids:
@@ -92,28 +85,15 @@ def generate_service_line_points(service_line_id):
                 cur_section = Section.objects.get(id=int(section_id))
                 if pattern.search(cur_section.xy_coordinate):
                     point_list.append(cur_section.xy_coordinate)
-        begin_point, end_point, points_str = handle(point_list, direction)
+        begin_point, end_point, points_str = handle(point_list)
         guard_line.objects.filter(uid=service_line_id+increment).\
             update(points=points_str, begin_point=begin_point, end_point=end_point)
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!Done!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
 
-def handle(point_list, direction):
-    print point_list
+def handle(point_list):
     points_str = ','.join(point_list)
     point_list1 = points_str.split(',')
-    print point_list1
-    new_points = []
-    if(direction == 2):
-        for i in range(0, len(point_list1), 2):
-            new_points.append(point_list1[i:i + 2])
-        for i in range(0, len(new_points) / 2, 1):
-            temp_points = new_points[i]
-            new_points[i] = new_points[len(new_points) - 1 - i]
-            new_points[len(new_points) - 1 - i] = temp_points
-        point_list1 = new_points
-        print 'reverse points:'
-        print point_list1
     begin_point = ''
     end_point = ''
     for item in point_list1:
@@ -240,3 +220,64 @@ def check_faculty_count_particular_role(instance):
         else:
             count = 0
     return count
+
+
+# 将岗及岗的人员复制并关联给段
+def copy_station_to_new_section(new_section, old_section):
+    station_list = old_section.Section_Station.all()
+    for station in station_list:
+        chief = station.chief.all()
+        exec_chief_trans = station.exec_chief_trans.all()
+        new_station = Station(district_id=station.district_id, name=station.name, location=station.location,
+                              section_id=new_section.id, remark1=station.remark1, remark2=station.remark2,
+                              remark3=station.remark3, channel=station.channel, call_sign=station.call_sign,
+                              enabled=station.enabled)
+        try:
+            with transaction.atomic():
+                new_station.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        for item in chief:
+            new_station.chief.add(item)
+        for item in exec_chief_trans:
+            new_station.exec_chief_trans.add(item)
+
+
+# 复制路时触发
+def copy_section_to_new_road(new_road, old_road):
+    section_list = old_road.Road_Section.all()
+    str_list = []
+    for section in section_list:
+        chief = section.chief.all()
+        exec_chief_sub_bureau = section.exec_chief_sub_bureau.all()
+        exec_chief_trans = section.exec_chief_trans.all()
+        exec_chief_armed_poli = section.exec_chief_armed_poli.all()
+        new_section = Section.objects.create(district_id=section.district_id, name=section.name,
+                                             start_place=section.start_place, end_place=section.end_place,
+                                             xy_coordinate=section.xy_coordinate, road_id=new_road.id,
+                                             remark1=section.remark1, remark2=section.remark2, remark3=section.remark3,
+                                             channel=section.channel, call_sign=section.call_sign,
+                                             enabled=section.enabled)
+        try:
+            with transaction.atomic():
+                new_section.save()
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_SAVE_INFO_FAIL,
+                                           status.HTTP_500_INTERNAL_SERVER_ERROR)
+        str_list.append(str(new_section.id))
+        for item in chief:
+            new_section.chief.add(item)
+        for item in exec_chief_armed_poli:
+            new_section.exec_chief_armed_poli.add(item)
+        for item in exec_chief_trans:
+            new_section.exec_chief_trans.add(item)
+        for item in exec_chief_sub_bureau:
+            new_section.exec_chief_sub_bureau.add(item)
+        copy_station_to_new_section(new_section, section)
+    new_road.sectionids = '-'.join(str_list)
+    new_road.save()

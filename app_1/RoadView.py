@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Serializers.serializers import RoadSerializer, SingleRoadSerializer, RoadExcelSerializer, FacultySerializer
 from django.db.models import Q
 from api_tools.token import SystemAuthentication
-from api_tools.api_tools import update_service_line_road_ids, update_service_submit
+from api_tools.api_tools import update_service_line_road_ids, update_service_submit, copy_section_to_new_road
 
 
 class RoadView(APIView):
@@ -213,7 +213,7 @@ class RoadFacultyView(APIView):
             cur_faculty = cur_faculty.first()
         else:
             cur_faculty = Faculty(name=name, mobile=mobile, duty=duty,
-                                                 level=1, role=faculty_type, main_id=road_id,
+                                                 level=1, role=faculty_type, main_id=road_id, main_name=cur_road.name,
                                                  district_id=cur_road.district_id, channel=cur_road.channel,
                                                  call_sign=cur_road.call_sign)
             # 岗位人数限制
@@ -280,9 +280,6 @@ class DeleteRoadFaculty(APIView):
             cur_road.exec_chief_trans.remove(cur_faculty)
         if faculty_type == 4:
             cur_road.exec_chief_armed_poli.remove(cur_faculty)
-        cur_faculty.channel = ''
-        cur_faculty.call_sign = ''
-        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -526,6 +523,8 @@ class CopyRoadView(APIView):
             new_road.exec_chief_trans.add(item)
         for item in arm_poli:
             new_road.exec_chief_armed_poli.add(item)
+        # 段的复制
+        copy_section_to_new_road(new_road, cur_road)
         return Response(response_data, status.HTTP_200_OK)
 
 

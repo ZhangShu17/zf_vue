@@ -36,4 +36,8 @@ for i in range(0,len(newPoints)/2,1):
     tempPoint = newPoints[i]
     newPoints[i] = newPoints[len(newPoints)-1-i]
     newPoints[len(newPoints) - 1 - i] = tempPoint
-print newPoints
+retPoint = []
+for array in newPoints:
+    for coordinate in array:
+        retPoint.append(coordinate)
+print retPoint

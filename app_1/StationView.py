@@ -209,7 +209,7 @@ class StationFacultyView(APIView):
                 role = 2
             else:
                 role = 1
-            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty,
+            cur_faculty = Faculty(name=name, mobile=mobile, duty=duty, main_name=cur_station.name,
                                                  level=3, role=role, main_id=station_id,
                                                  district_id=cur_station.district_id, channel=cur_station.channel,
                                                  call_sign=cur_station.call_sign)
@@ -262,7 +262,7 @@ class StationFacultyView(APIView):
         cur_faculty = Faculty.objects.get(id=faculty_id)
         if faculty_type == 1:
             cur_station.chief.remove(cur_faculty)
-        if faculty_type == 2:
+        if faculty_type == 3:
             cur_station.exec_chief_trans.remove(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)
 
@@ -271,7 +271,7 @@ class StationFacultyView(APIView):
 class DeleteStationFacultyView(APIView):
     authentication_classes = (SystemAuthentication,)
 
-    def get(self,request):
+    def get(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
                          'retMsg': error_constants.ERR_STATUS_SUCCESS[1]}
         try:
@@ -289,9 +289,6 @@ class DeleteStationFacultyView(APIView):
             cur_station.chief.remove(cur_faculty)
         if faculty_type == 3:
             cur_station.exec_chief_trans.remove(cur_faculty)
-        cur_faculty.channel = ''
-        cur_faculty.call_sign = ''
-        cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
