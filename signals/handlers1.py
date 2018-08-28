@@ -83,16 +83,17 @@ def station_faculty_change(sender, instance, model, action, pk_set, **kwargs):
             # 无其他职位
             if count < 2:
                 guard_admin.objects.filter(uid=item+increment).update(dutyname=duty_name, orderlist=order_list,
-                                                                     category='3', mainid=instance.id+increment)
+                                                                      category='3', mainid=instance.id+increment,
+                                                                      radio_station=instance.channel,
+                                                                      call=instance.call_sign)
             # 有其他职位
             else:
                 cur_faculty = Faculty.objects.filter(id=item).first()
                 username = cur_faculty.name
                 duties = cur_faculty.duty
                 phone = cur_faculty.mobile
-                radio_station = cur_faculty.channel
-                call = cur_faculty.call_sign
-                count = guard_admin.objects.count()
+                radio_station = instance.channel
+                call = instance.call_sign
                 cur_guard_admin = guard_admin(uid=item+increment,
                                               username=username, duties=duties, phone=phone, radio_station=radio_station,
                                               call=call, dutyname=duty_name, orderlist=order_list,
@@ -187,16 +188,17 @@ def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
             # 无其他职位
             if count < 2:
                 guard_admin.objects.filter(uid=item+increment).update(dutyname=duty_name, orderlist=order_list,
-                                                                     category='2', mainid=instance.id+increment)
+                                                                     category='2', mainid=instance.id+increment,
+                                                                      radio_station=instance.channel,
+                                                                      call=instance.call_sign)
             # 有其他职位
             else:
                 cur_faculty = Faculty.objects.filter(id=item).first()
                 username = cur_faculty.name
                 duties = cur_faculty.duty
                 phone = cur_faculty.mobile
-                radio_station = cur_faculty.channel
-                call = cur_faculty.call_sign
-                count = guard_admin.objects.count()
+                radio_station = instance.channel
+                call = instance.call_sign
                 cur_guard_admin = guard_admin(uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
@@ -286,16 +288,17 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
             # 无其他职位
             if count < 2:
                 guard_admin.objects.filter(uid=item+increment).update(dutyname=duty_name, orderlist=order_list,
-                                                                     category='1', mainid=instance.id+increment)
+                                                                     category='1', mainid=instance.id+increment,
+                                                                      radio_station=instance.channel,
+                                                                      call=instance.call_sign)
             # 有其他职位
             else:
                 cur_faculty = Faculty.objects.filter(id=item).first()
                 username = cur_faculty.name
                 duties = cur_faculty.duty
                 phone = cur_faculty.mobile
-                radio_station = cur_faculty.channel
-                call = cur_faculty.call_sign
-                count = guard_admin.objects.count()
+                radio_station = instance.channel
+                call = instance.call_sign
                 cur_guard_admin = guard_admin(uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
