@@ -36,6 +36,7 @@ class FacultySerializer(serializers.ModelSerializer):
             'main_name',
             'district_id',
             'district_name',
+            'enabled'
         )
 
     def get_level_name(self, obj):
@@ -283,6 +284,7 @@ class SingleStationSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'location',
+            'enabled',
             'chief',
             'exec_chief_trans'
         )
@@ -305,6 +307,7 @@ class SectionExcelSerializer(serializers.ModelSerializer):
             'exec_chief_trans',
             'exec_chief_armed_poli',
             'Section_Station',
+            'enabled'
         )
 
 
@@ -314,7 +317,7 @@ class RoadExcelSerializer(serializers.ModelSerializer):
     exec_chief_trans = FacultySerializer(many=True)
     exec_chief_armed_poli = FacultySerializer(many=True)
     section_station_num = serializers.SerializerMethodField()
-    Road_Section = SectionExcelSerializer(many=True, )
+    Road_Section = SectionExcelSerializer(many=True)
 
     class Meta:
         model = Road
