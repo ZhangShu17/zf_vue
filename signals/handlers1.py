@@ -9,6 +9,7 @@ from api_tools.api_tools import is_already_in_use
 from api_tools.api_tools import generate_service_line_points
 import random
 
+
 @receiver(signals.post_save, sender=Faculty)
 def create_update_faculty(sender, instance, created, **kwargs):
     if created:
@@ -18,7 +19,7 @@ def create_update_faculty(sender, instance, created, **kwargs):
         duty = instance.duty
         channel = instance.channel
         call_sign = instance.call_sign
-        cur_guard_admin = guard_admin(id=id+increment, uid=id+increment, duties=duty,
+        cur_guard_admin = guard_admin(uid=id+increment, duties=duty,
                                                      phone=mobile, radio_station=channel,
                                                      call=call_sign, username=name)
         cur_guard_admin.save()
@@ -93,7 +94,7 @@ def station_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
                 count = guard_admin.objects.count()
-                cur_guard_admin = guard_admin(id=item+increment+count+random.randint(10000, 99999), uid=item+increment,
+                cur_guard_admin = guard_admin(uid=item+increment,
                                               username=username, duties=duties, phone=phone, radio_station=radio_station,
                                               call=call, dutyname=duty_name, orderlist=order_list,
                                               category='3', mainid=instance.id + increment)
@@ -197,7 +198,7 @@ def section_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
                 count = guard_admin.objects.count()
-                cur_guard_admin = guard_admin(id=item+increment+count+random.randint(10000, 99999), uid=item+increment, username=username, duties=duties,
+                cur_guard_admin = guard_admin(uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
                                                              category='2', mainid=instance.id + increment)
@@ -296,7 +297,7 @@ def road_faculty_change(sender, instance, model, action, pk_set, **kwargs):
                 radio_station = cur_faculty.channel
                 call = cur_faculty.call_sign
                 count = guard_admin.objects.count()
-                cur_guard_admin = guard_admin(id=item+increment+count+random.randint(10000, 99999), uid=item+increment, username=username, duties=duties,
+                cur_guard_admin = guard_admin(uid=item+increment, username=username, duties=duties,
                                                              phone=phone, radio_station=radio_station, call=call,
                                                              dutyname=duty_name, orderlist=order_list,
                                                              category='1', mainid=instance.id + increment)
