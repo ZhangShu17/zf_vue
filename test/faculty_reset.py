@@ -80,7 +80,7 @@ for road in Road.objects.all():
                                                                       mainid=road.id+increment)
         else:
             guard_admin.objects.create(uid=faculty.id+increment, duties=faculty.duty, username=faculty.name,
-                                       phone=faculty.mobile, enabled=str(int(faculty.enabled)), dutyname=u'段长',
+                                       phone=faculty.mobile, enabled=str(int(faculty.enabled)), dutyname=u'路长',
                                        radio_station=road.channel, call=road.call_sign, category=1,
                                        orderlist=1, mainid=road.id+increment)
     for faculty in road.exec_chief_sub_bureau.all():
@@ -100,7 +100,7 @@ for road in Road.objects.all():
                                                                       mainid=road.id+increment)
         else:
             guard_admin.objects.create(uid=faculty.id+increment, duties=faculty.duty, username=faculty.name,
-                                       phone=faculty.mobile, enabled=str(int(faculty.enabled)), dutyname=u'执行路长(交通)',
+                                       phone=faculty.mobile, enabled=str(int(faculty.enabled)), dutyname=u'执行路长(交管)',
                                        radio_station=road.channel, call=road.call_sign, category=1,
                                        orderlist=3, mainid=road.id+increment)
     for faculty in road.exec_chief_armed_poli.all():
