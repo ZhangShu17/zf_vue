@@ -23,7 +23,7 @@ class CreateAccountView(APIView):
             district_id = item.get('district_id')
             password_md5 = hashlib.md5(pass_word).hexdigest()
             if not Account.objects.filter(name=user_name).exists():
-                cur_account = Account.objects.create(name=user_name, password=password_md5, district_id=district_id)
+                cur_account = Account(name=user_name, password=password_md5, district_id=district_id)
                 try:
                     with transaction.atomic():
                         cur_account.save()
@@ -43,7 +43,7 @@ class CreateDistrictView(APIView):
             code = item.get('code')
             name = item.get('name')
             if not District.objects.filter(name=name, code=code).exists():
-                cur_district = District.objects.create(name=name, code=code)
+                cur_district = District(name=name, code=code)
                 try:
                     with transaction.atomic():
                         cur_district.save()

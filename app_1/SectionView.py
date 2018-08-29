@@ -41,7 +41,7 @@ class SectionView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
 
         if road_id:
-            cur_section = Section.objects.create(name=name, start_place=start_place, end_place=end_place,
+            cur_section = Section(name=name, start_place=start_place, end_place=end_place,
                                                  xy_coordinate=xy_coordinate, road_id=road_id, channel=channel,
                                                  call_sign=call_sign, remark1=remark_1, remark2=remark_2,
                                                  remark3=remark_3, district_id=Road.objects.get(id=road_id).district_id)
@@ -56,7 +56,7 @@ class SectionView(APIView):
                                                status.HTTP_500_INTERNAL_SERVER_ERROR)
             update_road_section_ids(road_id, cur_section.id, True)
         else:
-            cur_section = Section.objects.create(name=name, start_place=start_place,
+            cur_section = Section(name=name, start_place=start_place,
                                                  end_place=end_place, xy_coordinate=xy_coordinate,
                                                  remark1=remark_1, channel=channel, call_sign=call_sign,
                                                  remark2=remark_2, remark3=remark_3, district_id=district_id)
@@ -157,7 +157,8 @@ class SectionView(APIView):
             cur_section.remark2 = remark_2
         if remark_3:
             cur_section.remark3 = remark_3
-        cur_section.save()
+        with transaction.atomic():
+            cur_section.save()
         update_faculty_channel_call_sign(2, section_id)
         return Response(response_data, status.HTTP_200_OK)
 
@@ -176,7 +177,8 @@ class DeleteSectionView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_section = Section.objects.get(id=section_id)
         cur_section.enabled = False
-        cur_section.save()
+        with transaction.atomic():
+            cur_section.save()
 
         # 更新road的sectionids字段
         if cur_section.road_id:
@@ -189,7 +191,8 @@ class DeleteSectionView(APIView):
             cur_guard_road = guard_road.objects.get(uid=road_id+increment)
             cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
             cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
-            cur_guard_road.save()
+            with transaction.atomic():
+                cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -370,7 +373,8 @@ class SectionNotInToRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_section = Section.objects.get(id=section_id)
         cur_section.road_id = road_id
-        cur_section.save()
+        with transaction.atomic():
+            cur_section.save()
 
         # 修改road的sectionids字段
         update_road_section_ids(road_id, section_id, True)
@@ -381,7 +385,8 @@ class SectionNotInToRoadView(APIView):
         cur_guard_road = guard_road.objects.get(uid=road_id + increment)
         cur_guard_road.sectionnum = cur_guard_road.sectionnum + 1
         cur_guard_road.stationnum = cur_guard_road.stationnum + station_num
-        cur_guard_road.save()
+        with transaction.atomic():
+            cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
     def delete(self, request):
@@ -396,7 +401,8 @@ class SectionNotInToRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_section = Section.objects.get(id=section_id)
         cur_section.road_id = None
-        cur_section.save()
+        with transaction.atomic():
+            cur_section.save()
 
         # 更新road 的sectionids
         update_road_section_ids(road_id, section_id, False)
@@ -406,7 +412,8 @@ class SectionNotInToRoadView(APIView):
         cur_guard_road = guard_road.objects.get(uid=road_id + increment)
         cur_guard_road.sectionnum = cur_guard_road.sectionnum - 1
         cur_guard_road.stationnum = cur_guard_road.stationnum - station_num
-        cur_guard_road.save()
+        with transaction.atomic():
+            cur_guard_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -476,7 +483,8 @@ class FacultyNotInSection(APIView):
             cur_section.exec_chief_armed_poli.add(cur_faculty)
         cur_faculty.channel = cur_section.channel
         cur_faculty.call_sign = cur_section.call_sign
-        cur_faculty.save()
+        with transaction.atomic():
+            cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -566,7 +574,8 @@ class SectionRank(APIView):
             section_id_list[index], section_id_list[index+1] = section_id_list[index+1], section_id_list[index]
 
         cur_road.sectionids = '-'.join(section_id_list)
-        cur_road.save()
+        with transaction.atomic():
+            cur_road.save()
         return Response(response_data, status.HTTP_200_OK)
 
 

@@ -100,7 +100,8 @@ class FacultyView(APIView):
         if count >= 4:
             return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
         else:
-            cur_faculty.save()
+            with transaction.atomic():
+                cur_faculty.save()
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get(self, request):

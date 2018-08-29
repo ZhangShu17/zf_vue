@@ -37,7 +37,7 @@ class StationView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         if section_id:
-            cur_station = Station.objects.create(name=name, location=location, section_id=section_id,
+            cur_station = Station(name=name, location=location, section_id=section_id,
                                                  district_id=Section.objects.get(id=section_id).district_id,
                                                  channel=channel, call_sign=call_sign,
                                                  remark1=remark_1, remark2=remark_2, remark3=remark_3)
@@ -56,7 +56,7 @@ class StationView(APIView):
                 cur_guard_road = guard_road.objects.filter(uid=road_id + increment)
                 cur_guard_road.update(stationnum=F('stationnum')+1)
         else:
-            cur_station = Station.objects.create(name=name, location=location, channel=channel,
+            cur_station = Station(name=name, location=location, channel=channel,
                                                  remark1=remark_1, district_id=district_id, call_sign=call_sign,
                                                  remark2=remark_2, remark3=remark_3)
             try:
@@ -149,7 +149,8 @@ class StationView(APIView):
             cur_station.remark2 = remark_2
         if remark_3:
             cur_station.remark3 = remark_3
-        cur_station.save()
+        with transaction.atomic():
+            cur_station.save()
         update_faculty_channel_call_sign(3, station_id)
         return Response(response_data, status.HTTP_200_OK)
 
@@ -164,7 +165,8 @@ class StationView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_station = Station.objects.get(id=station_id)
         cur_station.enabled = False
-        cur_station.save()
+        with transaction.atomic():
+            cur_station.save()
 
         # 路的段/岗数量更新
         section_id = cur_station.section_id
@@ -330,7 +332,8 @@ class StationNotInToSectionView(APIView):
         print(station_id)
         cur_station = Station.objects.get(id=station_id)
         cur_station.section_id = section_id
-        cur_station.save()
+        with transaction.atomic():
+            cur_station.save()
 
         # 路的段/岗数量更新
         road_id = Section.objects.get(id=section_id).road_id
@@ -419,7 +422,8 @@ class FacultyNotInStation(APIView):
         call_sign = cur_station.call_sign
         cur_faculty.channel = channel
         cur_faculty.call_sign = call_sign
-        cur_faculty.save()
+        with transaction.atomic():
+            cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -445,7 +449,7 @@ class CopyStationView(APIView):
         cur_station = Station.objects.get(id=station_id)
         district_id = cur_station.district_id
         section_id = cur_station.section_id
-        new_station = Station.objects.create(name=name, location=location, channel=channel,
+        new_station = Station(name=name, location=location, channel=channel,
                                              remark1=remark_1, call_sign=call_sign, remark2=remark_2,
                                              remark3=remark_3, district_id=district_id)
         try:

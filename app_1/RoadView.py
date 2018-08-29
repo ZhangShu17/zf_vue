@@ -37,7 +37,7 @@ class RoadView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_road = Road.objects.create(name=name, length=length, start_place=start_place, channel=channel,
+        cur_road = Road(name=name, length=length, start_place=start_place, channel=channel,
                                        call_sign=call_sign, end_place=end_place, remark1=remark_1, remark2=remark_2,
                                        remark3=remark_3, district_id=district_id)
         try:
@@ -144,7 +144,8 @@ class RoadView(APIView):
         cur_road.remark3 = remark_3
         cur_road.channel = channel
         cur_road.call_sign = call_sign
-        cur_road.save()
+        with transaction.atomic():
+            cur_road.save()
         update_faculty_channel_call_sign(1, road_id)
         return Response(response_data, status.HTTP_200_OK)
 
@@ -297,7 +298,8 @@ class DeleteRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_road = Road.objects.get(id=road_id)
         cur_road.enabled = False
-        cur_road.save()
+        with transaction.atomic():
+            cur_road.save()
 
         # 更新serviceline的roadids字段
         related_service_line_list = cur_road.Road_Service.filter(enabled=True).distinct()
@@ -473,7 +475,8 @@ class FacultyNotInRoad(APIView):
             cur_road.exec_chief_armed_poli.add(cur_faculty)
         cur_faculty.channel = cur_road.channel
         cur_faculty.call_sign = cur_road.call_sign
-        cur_faculty.save()
+        with transaction.atomic():
+            cur_faculty.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -500,7 +503,7 @@ class CopyRoadView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_road = Road.objects.get(id=road_id)
         district_id = cur_road.district_id
-        new_road = Road.objects.create(name=name, start_place=start_place, end_place=end_place,
+        new_road = Road(name=name, start_place=start_place, end_place=end_place,
                                        length=length, remark1=remark_1, remark2=remark_2, channel=channel,
                                        call_sign=call_sign, remark3=remark_3, district_id=district_id)
         try:
@@ -563,6 +566,7 @@ class RoadRank(APIView):
             road_id_list[index], road_id_list[index+1] = road_id_list[index+1], road_id_list[index]
 
         cur_service_line.roadids = '-'.join(road_id_list)
-        cur_service_line.save()
+        with transaction.atomic():
+            cur_service_line.save()
         return Response(response_data, status.HTTP_200_OK)
 

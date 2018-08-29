@@ -2,6 +2,8 @@
 from __future__ import division
 from rest_framework import serializers
 from app_1.models import Faculty, Road, District, Section, Station, ServiceLine
+from t.models import guard_line
+from constants.constants import increment
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -19,6 +21,7 @@ class FacultySerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
     main_name = serializers.SerializerMethodField()
     district_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Faculty
         fields = (
@@ -344,6 +347,7 @@ class ServiceLineSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(many=True)
     road = RoadSerializer(many=True)
     roadCount = serializers.SerializerMethodField()
+    points = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceLine
@@ -360,6 +364,7 @@ class ServiceLineSerializer(serializers.ModelSerializer):
             'road',
             'roadCount',
             'submit_district',
+            'points',
         )
 
     def get_roadCount(self, obj):
@@ -368,4 +373,10 @@ class ServiceLineSerializer(serializers.ModelSerializer):
             return obj.road.filter(enabled=True, district_id=district_id).count()
         else:
             return obj.road.filter(enabled=True).count()
+
+    def get_points(self, obj):
+        if guard_line.objects.filter(uid=obj.id+increment).exists():
+            return guard_line.objects.filter(uid=obj.id+increment).first().points
+        else:
+            return ''
 
