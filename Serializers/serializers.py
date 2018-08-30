@@ -182,6 +182,7 @@ class SectionSerializer(serializers.ModelSerializer):
     station_number = serializers.SerializerMethodField()
     district_name = serializers.SerializerMethodField()
     related_service_line = serializers.SerializerMethodField()
+    related_service_line_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = Section
@@ -199,6 +200,7 @@ class SectionSerializer(serializers.ModelSerializer):
             'remark3',
             'district_name',
             'related_service_line',
+            'related_service_line_ids',
         )
 
     def get_station_number(self, obj):
@@ -217,6 +219,13 @@ class SectionSerializer(serializers.ModelSerializer):
             return '-'.join(service_list)
         else:
             return ''
+
+    def related_service_line_ids(self, obj):
+        if obj.road:
+            service_list = obj.road.Road_Service.values_list('id', flat=True)
+            return list(service_list)
+        else:
+            return []
 
 
 class SingleSectionSerializer(serializers.ModelSerializer):
@@ -390,5 +399,3 @@ class ServiceLineSerializer(serializers.ModelSerializer):
                     if pattern.search(cur_section.xy_coordinate):
                         points_list.append(cur_section.xy_coordinate)
         return points_list
-
-
