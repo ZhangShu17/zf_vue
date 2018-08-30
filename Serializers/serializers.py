@@ -2,6 +2,8 @@
 from __future__ import division
 from rest_framework import serializers
 from app_1.models import Faculty, Road, District, Section, Station, ServiceLine
+from t.models import guard_line
+from constants.constants import increment, pattern
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -19,6 +21,7 @@ class FacultySerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
     main_name = serializers.SerializerMethodField()
     district_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Faculty
         fields = (
@@ -347,6 +350,7 @@ class ServiceLineSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(many=True)
     road = RoadSerializer(many=True)
     roadCount = serializers.SerializerMethodField()
+    points = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceLine
@@ -363,6 +367,7 @@ class ServiceLineSerializer(serializers.ModelSerializer):
             'road',
             'roadCount',
             'submit_district',
+            'points',
         )
 
     def get_roadCount(self, obj):
@@ -371,4 +376,22 @@ class ServiceLineSerializer(serializers.ModelSerializer):
             return obj.road.filter(enabled=True, district_id=district_id).count()
         else:
             return obj.road.filter(enabled=True).count()
+
+    def get_points(self, obj):
+        points_list = []
+        road_ids = obj.roadids
+        if road_ids:
+            road_id_list = road_ids.split('-')
+            for road_id in road_id_list:
+                cur_road = Road.objects.get(id=int(road_id))
+                section_ids = cur_road.sectionids
+                if not section_ids:
+                    break
+                section_id_list = section_ids.split('-')
+                for section_id in section_id_list:
+                    cur_section = Section.objects.get(id=int(section_id))
+                    if pattern.search(cur_section.xy_coordinate):
+                        points_list.append(cur_section.xy_coordinate)
+        return points_list
+
 

@@ -43,7 +43,8 @@ def update_road_section_ids(road_id, section_id, bollen):
         sectionids.remove(str(section_id))
         sectionids_str = '-'.join(sectionids)
         cur_road.sectionids = sectionids_str
-    cur_road.save()
+    with transaction.atomic():
+        cur_road.save()
 
 
 def update_service_line_road_ids(service_line_id, road_id, bollen):
@@ -60,7 +61,8 @@ def update_service_line_road_ids(service_line_id, road_id, bollen):
         roadids_str = '-'.join(roadids)
         cur_service_line.roadids = roadids_str
         guard_road.objects.filter(id=road_id+increment).update(lineid=None)
-    cur_service_line.save()
+    with transaction.atomic():
+        cur_service_line.save()
 
 
 def generate_service_line_points(service_line_id):
@@ -120,7 +122,8 @@ def update_service_submit(service_line_id, road_id):
             cur_service.submit_district = '-'.join(district_id_ser)
         else:
             cur_service.submit_district = ''
-        cur_service.save()
+        with transaction.atomic():
+            cur_service.save()
 
 
 def update_faculty_channel_call_sign(level, element_id):
@@ -133,22 +136,26 @@ def update_faculty_channel_call_sign(level, element_id):
             item.channel = channel
             item.main_name = main_name
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_road.exec_chief_sub_bureau.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_road.exec_chief_trans.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_road.exec_chief_armed_poli.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
     if level == 2:
         cur_section = Section.objects.get(id=element_id)
         main_name = cur_section.name
@@ -158,22 +165,26 @@ def update_faculty_channel_call_sign(level, element_id):
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_section.exec_chief_sub_bureau.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_section.exec_chief_trans.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_section.exec_chief_armed_poli.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
     if level == 3:
         cur_station = Station.objects.get(id=element_id)
         main_name = cur_station.name
@@ -183,12 +194,14 @@ def update_faculty_channel_call_sign(level, element_id):
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
         for item in cur_station.exec_chief_trans.all():
             item.main_name = main_name
             item.channel = channel
             item.call_sign = call_sign
-            item.save()
+            with transaction.atomic():
+                item.save()
 
 
 def check_faculty_count_particular_role(instance):
@@ -256,7 +269,7 @@ def copy_section_to_new_road(new_road, old_road):
         exec_chief_sub_bureau = section.exec_chief_sub_bureau.all()
         exec_chief_trans = section.exec_chief_trans.all()
         exec_chief_armed_poli = section.exec_chief_armed_poli.all()
-        new_section = Section.objects.create(district_id=section.district_id, name=section.name,
+        new_section = Section(district_id=section.district_id, name=section.name,
                                              start_place=section.start_place, end_place=section.end_place,
                                              xy_coordinate=section.xy_coordinate, road_id=new_road.id,
                                              remark1=section.remark1, remark2=section.remark2, remark3=section.remark3,
@@ -281,4 +294,5 @@ def copy_section_to_new_road(new_road, old_road):
             new_section.exec_chief_sub_bureau.add(item)
         copy_station_to_new_section(new_section, section)
     new_road.sectionids = '-'.join(str_list)
-    new_road.save()
+    with transaction.atomic():
+        new_road.save()

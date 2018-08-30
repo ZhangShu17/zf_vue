@@ -32,7 +32,7 @@ class ServiceLineView(APIView):
             print 'function name: ', __name__
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
-        cur_service_line = ServiceLine.objects.create(name=name, startPlace=start_place, endPlace=end_place,
+        cur_service_line = ServiceLine(name=name, startPlace=start_place, endPlace=end_place,
                                                       time=time, remark1=remark_1, remark2=remark_2, remark3=remark_3)
         try:
             with transaction.atomic():
@@ -117,7 +117,8 @@ class ServiceLineView(APIView):
         cur_service_line.remark1 = remark1
         cur_service_line.remark2 = remark2
         cur_service_line.remark3 = remark3
-        cur_service_line.save()
+        with transaction.atomic():
+            cur_service_line.save()
         dis_list = []
         if select_districts_str:
             dis_list = select_districts_str.split('-')
@@ -138,7 +139,8 @@ class ServiceLineView(APIView):
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_service_line = ServiceLine.objects.get(id=service_line_id)
         cur_service_line.enabled = False
-        cur_service_line.save()
+        with transaction.atomic():
+            cur_service_line.save()
         return Response(response_data, status.HTTP_200_OK)
 
 
@@ -213,6 +215,7 @@ class SubmitServiceLineView(APIView):
                 district_list.append(str(district_id))
                 submit_district = '-'.join(district_list)
         cur_service_line.submit_district = submit_district
-        cur_service_line.save()
+        with transaction.atomic():
+            cur_service_line.save()
         return Response(response_data, status.HTTP_200_OK)
 
