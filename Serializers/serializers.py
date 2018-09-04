@@ -168,7 +168,6 @@ class RoadSerializer(serializers.ModelSerializer):
             return []
 
 
-
 class SingleRoadSerializer(serializers.ModelSerializer):
     chief = FacultySerializer(many=True)
     exec_chief_sub_bureau = FacultySerializer(many=True)
@@ -182,6 +181,8 @@ class SingleRoadSerializer(serializers.ModelSerializer):
             'name',
             'start_place',
             'end_place',
+            'channel',
+            'call_sign',
             'chief',
             'exec_chief_sub_bureau',
             'exec_chief_trans',
@@ -253,6 +254,8 @@ class SingleSectionSerializer(serializers.ModelSerializer):
             'start_place',
             'end_place',
             'xy_coordinate',
+            'channel',
+            'call_sign',
             'chief',
             'exec_chief_sub_bureau',
             'exec_chief_trans',
@@ -306,6 +309,8 @@ class SingleStationSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'location',
+            'channel',
+            'call_sign',
             'enabled',
             'chief',
             'exec_chief_trans'
@@ -324,6 +329,8 @@ class SectionExcelSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'channel',
+            'call_sign',
             'chief',
             'exec_chief_sub_bureau',
             'exec_chief_trans',
@@ -348,6 +355,8 @@ class RoadExcelSerializer(serializers.ModelSerializer):
             'name',
             'length',
             'section_station_num',
+            'channel',
+            'call_sign',
             'chief',
             'exec_chief_sub_bureau',
             'exec_chief_trans',
