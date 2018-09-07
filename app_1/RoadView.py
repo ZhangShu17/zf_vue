@@ -219,7 +219,16 @@ class RoadFacultyView(APIView):
                                                  call_sign=cur_road.call_sign)
             # 岗位人数限制
             count = check_faculty_count_particular_role(cur_faculty)
-            if count >= 4:
+            if faculty_type == 1:
+                count1 = cur_road.chief.filter(enabled=True).count()
+            if faculty_type == 2:
+                count1 = cur_road.exec_chief_sub_bureau.filter(enabled=True).count()
+            if faculty_type == 3:
+                count1 = cur_road.exec_chief_trans.filter(enabled=True).count()
+            if faculty_type == 4:
+                count1 = cur_road.exec_chief_armed_poli.filter(enabled=True).count()
+            print 'road people_count:', count1
+            if count >= 4 or count1 >= 4:
                 return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
             else:
                 try:

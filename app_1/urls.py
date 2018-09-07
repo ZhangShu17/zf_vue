@@ -66,6 +66,9 @@ urlpatterns = [
     # 勤务路线
     url(r'^server_line/edit?$',ServiceLine.ServiceLineView.as_view(), name='server_line'),
 
+    # 勤务excel
+    url(r'^server_line/excel?$', ServiceLine.ServiceLineExcelView.as_view(), name='server_excel_info'),
+
     # 分局提交勤務路綫
     url(r'^server_line/submit?$',ServiceLine.SubmitServiceLineView.as_view(), name='server_line_submit'),
 

@@ -8,7 +8,8 @@ from models import Road, District, ServiceLine
 from constants import error_constants
 from api_tools.api_tools import generate_error_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from Serializers.serializers import StationSerializer, SingleStationSerializer, ServiceLineSerializer
+from Serializers.serializers import StationSerializer, SingleStationSerializer, ServiceLineSerializer, \
+    ServiceLineExcelSerializer
 from api_tools.token import SystemAuthentication
 
 
@@ -141,6 +142,24 @@ class ServiceLineView(APIView):
         cur_service_line.enabled = False
         with transaction.atomic():
             cur_service_line.save()
+        return Response(response_data, status.HTTP_200_OK)
+
+
+class ServiceLineExcelView(APIView):
+    authentication_classes = (SystemAuthentication,)
+
+    def get(self, request):
+        response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],
+                         'retMsg': error_constants.ERR_STATUS_SUCCESS[1],
+                         'data': {}}
+        try:
+            service_line_id = int(request.GET.get('serviceLineId'))
+        except Exception as ex:
+            print 'function name: ', __name__
+            print Exception, ":", ex
+            return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
+        cur_service_line = ServiceLine.objects.get(id=service_line_id)
+        response_data['data'] = ServiceLineExcelSerializer(cur_service_line).data
         return Response(response_data, status.HTTP_200_OK)
 
 

@@ -202,7 +202,7 @@ class StationFacultyView(APIView):
             print Exception, ":", ex
             return generate_error_response(error_constants.ERR_INVALID_PARAMETER, status.HTTP_400_BAD_REQUEST)
         cur_station = Station.objects.get(id=station_id)
-        cur_faculty = Faculty.objects.filter(name=name, mobile=mobile)
+        cur_faculty = Faculty.objects.filter(name=name, mobile=mobile, duty=duty)
         if cur_faculty.exists():
             cur_faculty.update(enabled=True)
             cur_faculty = cur_faculty.first()
@@ -217,7 +217,12 @@ class StationFacultyView(APIView):
                                                  call_sign=cur_station.call_sign)
             # 岗位人数限制
             count = check_faculty_count_particular_role(cur_faculty)
-            if count >= 4:
+            if role == 1:
+                count1 = cur_station.chief.filter(enabled=True).count()
+            else:
+                count1 = cur_station.exec_chief_trans.filter(enabled=True).count()
+            print 'station people_count:', count1
+            if count >= 4 or count1 >= 4:
                 return generate_error_response(error_constants.ERR_FACULTY_EXCEED_COUNT, status.HTTP_400_BAD_REQUEST)
             else:
                 try:
@@ -233,6 +238,7 @@ class StationFacultyView(APIView):
         if faculty_type == 3:
             cur_station.exec_chief_trans.add(cur_faculty)
         return Response(response_data, status.HTTP_200_OK)
+
 
     def get(self, request):
         response_data = {'retCode': error_constants.ERR_STATUS_SUCCESS[0],

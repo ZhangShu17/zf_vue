@@ -209,6 +209,7 @@ def check_faculty_count_particular_role(instance):
     level = instance.level
     role = instance.role
     main_id = instance.main_id
+    main_name = instance.main_name
     # if not instance.id:
     #     count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
     # # 表示更新的
@@ -226,10 +227,11 @@ def check_faculty_count_particular_role(instance):
         if level and role and main_id:
             # 表示创建
             if not instance.id:
-                count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).count()
+                count = Faculty.objects.filter(level=level, role=role, main_name=main_name, enabled=True).count()
+                print 'count:', count
             else:  # 表示更新
                 faculty_id = instance.id
-                count = Faculty.objects.filter(level=level, role=role, main_id=main_id, enabled=True).\
+                count = Faculty.objects.filter(level=level, role=role, main_name=main_name, enabled=True).\
                     exclude(id=faculty_id).count()
         else:
             count = 0

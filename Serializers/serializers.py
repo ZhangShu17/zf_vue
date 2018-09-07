@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
+
 from rest_framework import serializers
+
 from app_1.models import Faculty, Road, District, Section, Station, ServiceLine
-from t.models import guard_line
-from constants.constants import increment, pattern
+from constants.constants import pattern
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -362,6 +363,7 @@ class RoadExcelSerializer(serializers.ModelSerializer):
             'exec_chief_trans',
             'exec_chief_armed_poli',
             'Road_Section',
+            'enabled',
         )
 
     def get_section_station_num(self,obj):
@@ -372,6 +374,19 @@ class RoadExcelSerializer(serializers.ModelSerializer):
             cur_station = item.Section_Station.filter(enabled=True).all()
             station_count = station_count + cur_station.count()
         return str(section_count) + '-' + str(station_count)
+
+
+class ServiceLineExcelSerializer(serializers.ModelSerializer):
+    road = RoadExcelSerializer(many=True)
+
+    class Meta:
+        model = ServiceLine
+        fields = (
+            'id',
+            'name',
+            'time',
+            'road',
+        )
 
 
 class ServiceLineSerializer(serializers.ModelSerializer):
